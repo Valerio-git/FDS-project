@@ -5,11 +5,11 @@
 Cose che si possono modificare manualmente (e quindi cose da provare per ottenere il miglior risultato possibile):
 
 1) Parametri convoluzione:
-   • Kernel size (dimensione del filtro (es. 3×3, 5×5))
-   • Stride (di quanto si sposta il filtro a ogni passo. Stride > 1 = riduzione della risoluzione (downsampling))
-   • Padding (pixel aggiunti intorno all’immagine per controllare la dimensione dell’output)
-   • Numero di filtri = out_channels (ogni feature map produce un layer)
-   • Tipo di convoluzione
+   - Kernel size (dimensione del filtro (es. 3×3, 5×5))
+   - Stride (di quanto si sposta il filtro a ogni passo. Stride > 1 = riduzione della risoluzione (downsampling))
+   - Padding (pixel aggiunti intorno all’immagine per controllare la dimensione dell’output)
+   - Numero di filtri = out_channels (ogni feature map produce un layer)
+   - Tipo di convoluzione
 2) Funzione di attivazione (ReLU, LeakyReLU, PReLU, GELU)
 3) Normalizzazioni (Batch Normalization, Layer Normalization)
 4) Pooling (max, average)
