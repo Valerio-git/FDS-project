@@ -7,3 +7,6 @@ from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
 import random
+import shutil
+import argparse
+from rembg import remove
