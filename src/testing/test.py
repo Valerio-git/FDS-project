@@ -4,12 +4,13 @@ import torch
 import matplotlib.pyplot as plt
 from torchvision import transforms 
 
+from src.data_utils import get_dataset_path
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
 
 
 # Dataset path
-dataset_path = "/path/to/dataset"
+dataset_path = get_dataset_path()
 
 # Transofrmations (same as traing part)
 transform = transforms.Compose([

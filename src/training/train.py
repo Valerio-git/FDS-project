@@ -4,11 +4,12 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
+from src.data_utils import get_dataset_path
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
 
 # hyperparamethers
-dataset_path = 'C:\Users\valer\Desktop\FDS\FDS-project\recyclable-and-household-waste-classification/images/images'
+dataset_path = get_dataset_path()
 batch_size = 32
 num_epochs = 5
 learning_rate = 0.001

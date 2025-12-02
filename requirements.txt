@@ -10,3 +10,4 @@ import random
 import shutil
 import argparse
 from rembg import remove
+import kagglehub
