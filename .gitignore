@@ -1,2 +1,4 @@
 white_dataset/
 datasets/
+__pycache__/
+*.pyc
