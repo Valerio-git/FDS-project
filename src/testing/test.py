@@ -30,13 +30,10 @@ num_classes = len(test_dataset.classes)
 
 # Uploading the model
 model = CNN(num_classes).to("cuda")
-
-current_dir = os.path.dirname("src")
-model_path = os.path.join(current_dir, "..", "training", "train.py", "best_model.pth")
-model_path = os.path.abspath(model_path)
-
+print(f"current directory {os.path.abspath(__file__)}")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+model_path = os.path.join(BASE_DIR, "best_model.pth")
 model.load_state_dict(torch.load(model_path))
-model.load_state_dict(torch.load("best_model.pth"))   # uploading best model found in training
 
 # Perform sample inferences on random test images with different labels
 model.eval()
