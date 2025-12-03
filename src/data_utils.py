@@ -34,3 +34,5 @@ def get_dataset_path() -> str:
     path = kagglehub.dataset_download(KAGGLE_DATASET)
     print("Dataset downloaded / found in cache at:", path)
     return path
+
+print("Dataset path:", get_dataset_path())
