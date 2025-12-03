@@ -31,8 +31,8 @@ num_classes = len(test_dataset.classes)
 # Uploading the model
 model = CNN(num_classes).to("cuda")
 
-current_dir = os.path.dirname("src/testing")
-model_path = os.path.join(current_dir, "..", "training", "best_model.pth")
+current_dir = os.path.dirname("src")
+model_path = os.path.join(current_dir, "..", "training", "train.py", "best_model.pth")
 model_path = os.path.abspath(model_path)
 
 model.load_state_dict(torch.load(model_path))
