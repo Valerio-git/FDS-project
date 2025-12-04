@@ -1,4 +1,4 @@
-from training.train_utils import train_model
+from src.training.train_utils import train_model
 
 import torch
 import torch.nn as nn
@@ -45,7 +45,7 @@ def hyperparameter_search_lr_bs():
                     "best_val_acc": best_val_acc,
                 }
                 torch.save(model.state_dict(), "best_model_lr_bs.pth")
-                print("👉 New global best model saved to best_model_lr_bs.pth")
+                print("👉 New partial best model saved to best_model_lr_bs.pth")
 
     # Mostra i risultati ordinati per validation loss
     results_sorted = sorted(results, key=lambda x: x["best_val_loss"])

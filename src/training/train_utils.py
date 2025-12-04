@@ -89,7 +89,7 @@ def evaluate(model, dataloader, criterion):
     return epoch_loss, epoch_acc
 
     
-def train_model(batch_size = 32, num_epochs = 5, learning_rate = 1e-3, early_stopping = False, patience = 5, weight_decay = 0.0):
+def train_model(batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
     
     dataset_path = get_dataset_path()
 
@@ -118,17 +118,6 @@ def train_model(batch_size = 32, num_epochs = 5, learning_rate = 1e-3, early_sto
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
         val_loss, val_acc = evaluate(model, val_loader, criterion)
 
-        if val_loss < best_val_loss - 1e-4:
-            best_val_loss = val_loss
-            best_state_dict = model.state_dict()
-            epochs_no_improve = 0
-        else:
-            if early_stopping:
-                epochs_no_improve += 1
-                if epochs_no_improve >= patience:
-                    print(f"Early stopping at epoch {epoch+1}")
-                    break
-
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
         history["val_loss"].append(val_loss)
@@ -140,6 +129,16 @@ def train_model(batch_size = 32, num_epochs = 5, learning_rate = 1e-3, early_sto
             f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
         )
 
+        if val_loss < best_val_loss - 1e-4:
+            best_val_loss = val_loss
+            best_state_dict = model.state_dict()
+            epochs_no_improve = 0
+        else:
+            if early_stopping:
+                epochs_no_improve += 1
+                if epochs_no_improve >= patience:
+                    print(f"Early stopping at epoch {epoch+1}")
+                    break
     if best_state_dict is not None:
         model.load_state_dict(best_state_dict)
 
