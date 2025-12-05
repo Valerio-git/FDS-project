@@ -56,7 +56,7 @@ def hyperparameter_search_lr_bs():
             f"val_loss={r['best_val_loss']:.4f}, val_acc={r['best_val_acc']:.4f}"
         )
 
-    return results_sorted
+    return results_sorted, best_global_config
 
 def hyperparameter_search_weight_decay(best_batch_size, best_lr):
 
@@ -100,8 +100,8 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
                 "best_val_loss": best_val_loss,
                 "best_val_acc": best_val_acc,
             }
-            torch.save(model.state_dict(), "best_model.pth")
-            print("👉 New global best (LR+BS+WD) saved to best_model.pth")
+            torch.save(model.state_dict(), "src/checkpoints/cnn_stage1_A.pth")
+            print("👉 New global best (LR+BS+WD) saved to src/checkpoints/cnn_stage1_A.pth")
 
     results_sorted = sorted(results, key=lambda x: x["best_val_loss"])
 
