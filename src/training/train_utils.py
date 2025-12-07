@@ -4,7 +4,9 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
-from src.data_utils import get_dataset_path
+from src.data_utils import get_white_dataset_path
+from src.data_utils import get_raw_dataset_path
+
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
 
@@ -14,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
 
-def get_dataloaders(dataset_path, batch_size):
+def get_dataloaders(dataset_path, batch_size, white = False):
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -24,9 +26,9 @@ def get_dataloaders(dataset_path, batch_size):
         ),
     ])
 
-    train_dataset = WasteDataset(dataset_path, split='train', transform=transform)
-    val_dataset = WasteDataset(dataset_path, split='val', transform=transform)
-    test_dataset = WasteDataset(dataset_path, split='test', transform=transform)
+    train_dataset = WasteDataset(dataset_path, split='train', transform=transform, white = white)
+    val_dataset = WasteDataset(dataset_path, split='val', transform=transform, white = white)
+    test_dataset = WasteDataset(dataset_path, split='test', transform=transform, white = white)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -89,12 +91,15 @@ def evaluate(model, dataloader, criterion):
     return epoch_loss, epoch_acc
 
     
-def train_model(batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
+def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
     
-    dataset_path = get_dataset_path()
+    if white:
+        dataset_path = get_white_dataset_path()
+    else:
+        dataset_path = get_raw_dataset_path()
 
     train_dataset, val_dataset, test_dataset, \
-        train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size)
+        train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size, white = white)
 
     num_classes = len(train_dataset.classes)
     model = CNN(num_classes).to(device)
