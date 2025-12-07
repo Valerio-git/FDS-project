@@ -9,11 +9,12 @@ from src.data_utils import get_white_dataset_path
 
 # Define the dataset class (modified to include a split parameter)
 class WasteDataset(Dataset):
-    def __init__(self, split, transform=None, white = False):
+    def __init__(self, split = 'train', transform=None, white = False):
         if white:
             root_dir = get_white_dataset_path()
         else:
             root_dir = get_raw_dataset_path()
+        self.split = split
         self.root_dir = root_dir
         self.transform = transform
         self.classes = sorted(os.listdir(root_dir))
