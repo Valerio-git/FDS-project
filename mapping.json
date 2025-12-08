@@ -1,0 +1,38 @@
+{
+    "aerosol_cans": "metal",
+    "aluminum_food_cans": "metal",
+    "aluminum_soda_cans": "metal",
+    "steel_food_cans": "metal",
+
+    "glass_beverage_bottles": "glass",
+    "glass_cosmetic_containers": "glass",
+    "glass_food_jars": "glass",
+
+    "coffee_grounds": "organic",
+    "eggshells": "organic",
+    "food_waste": "organic",
+    "tea_bags": "organic",
+
+    "cardboard_boxes": "paper",
+    "cardboard_packaging": "paper",
+    "magazines": "paper",
+    "newspaper": "paper",
+    "office_paper": "paper",
+    "paper_cups": "paper",
+
+    "disposable_plastic_cutlery": "plastic",
+    "plastic_cup_lids": "plastic",
+    "plastic_detergent_bottles": "plastic",
+    "plastic_food_containers": "plastic",
+    "plastic_shopping_bags": "plastic",
+    "plastic_soda_bottles": "plastic",
+    "plastic_straws": "plastic",
+    "plastic_trash_bags": "plastic",
+    "plastic_water_bottles": "plastic",
+
+    "clothing": "textile",
+    "shoes": "textile",
+
+    "styrofoam_cups": "polystyrene",
+    "styrofoam_food_containers": "polystyrene"
+}
