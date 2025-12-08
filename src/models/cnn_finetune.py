@@ -5,7 +5,7 @@ def load_cnn_from_checkpoint(checkpoint_path: str, num_classes: int,
                              device: torch.device | None = None, strict: bool = True) -> CNN:
     model = CNN(num_classes = num_classes)
     state_dict = torch.load(checkpoint_path, map_location = "cpu")
-    model.load_state_dict(state_dict, strict = strict)
+    model.load_state_dict(state_dict["model_state_dict"], strict = strict)
 
     if device is not None:
         model.to(device)

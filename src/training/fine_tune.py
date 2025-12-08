@@ -19,8 +19,13 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 dataset_path = get_white_dataset_path()
 
+checkpoint = torch.load("cnn_stage1_A.pth", map_location=device)
+best_lr = checkpoint["learning_rate"]
+best_batch_size = checkpoint["batch_size"]
+best_weight_decay = checkpoint["weight_decay"]
+
 train_dataset, val_dataset, test_dataset, \
-    train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size = 32)
+    train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size = best_batch_size)
 
 ## number of batch size must be the optimal one
 
@@ -36,9 +41,8 @@ model = load_cnn_from_checkpoint(
 freeze_all_except_classifier(model)
 optimizer = torch.optim.Adam(
     get_trainable_parameters(model),
-    lr=1e-3,
+    lr = best_lr,
 )
-
 
 criterion = nn.CrossEntropyLoss()
 
@@ -56,7 +60,7 @@ for epoch in range(5):
 unfreeze_last_conv_block(model)
 optimizer = torch.optim.Adam(
     get_trainable_parameters(model),
-    lr=1e-4,
+    lr = best_lr * 0.1,
 )
 
 for epoch in range(5):

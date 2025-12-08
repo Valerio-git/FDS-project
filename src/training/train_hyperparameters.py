@@ -7,7 +7,7 @@ from torchvision import transforms
 
 def hyperparameter_search_lr_bs():
     batch_sizes = [16, 32, 64]
-    learning_rates = [1e-4, 1e-3, 1e-2]
+    learning_rates = [1e-3, 1e-2, 5e-2]
     num_epochs = 50  # A lot, but early stopping will help
     results = []
     best_global_loss = float("inf")
@@ -100,7 +100,11 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
                 "best_val_loss": best_val_loss,
                 "best_val_acc": best_val_acc,
             }
-            torch.save(model.state_dict(), "src/checkpoints/cnn_stage1_A.pth")
+            torch.save({"model_state_dict":model.state_dict(),
+                        "batch_size": best_batch_size,
+                        "learning_rate": best_lr,
+                        "weight_decay": wd,
+                        }, "src/checkpoints/cnn_stage1_A.pth")
             print("👉 New global best (LR+BS+WD) saved to src/checkpoints/cnn_stage1_A.pth")
 
     results_sorted = sorted(results, key=lambda x: x["best_val_loss"])
@@ -117,11 +121,11 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
 
 if __name__ == "__main__":
     # STEP 1: cerca LR + batch size
-    results_lr_bs, best_lr_bs = hyperparameter_search_lr_bs()
-    print("\nMigliore combinazione LR+BS:", best_lr_bs)
+    '''results_lr_bs, best_lr_bs = hyperparameter_search_lr_bs()
+    print("\nMigliore combinazione LR+BS:", best_lr_bs)'''
 
-    best_bs = best_lr_bs["batch_size"]
-    best_lr = best_lr_bs["learning_rate"]
+    best_bs = 64 #best_lr_bs["batch_size"]
+    best_lr = 0.001 #best_lr_bs["learning_rate"]
 
     # STEP 2: a LR+BS fissati, cerca il miglior weight_decay
     results_wd, best_full = hyperparameter_search_weight_decay(best_bs, best_lr)
