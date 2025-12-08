@@ -19,7 +19,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 dataset_path = get_white_dataset_path()
 
-checkpoint = torch.load("cnn_stage1_A.pth", map_location=device)
+checkpoint = torch.load("src/checkpoints/cnn_stage1_A.pth", map_location=device)
 best_lr = checkpoint["learning_rate"]
 best_batch_size = checkpoint["batch_size"]
 best_weight_decay = checkpoint["weight_decay"]
@@ -42,9 +42,11 @@ freeze_all_except_classifier(model)
 optimizer = torch.optim.Adam(
     get_trainable_parameters(model),
     lr = best_lr,
+    weight_decay = best_weight_decay
 )
 
 criterion = nn.CrossEntropyLoss()
+best_val_acc = -float("inf")
 
 for epoch in range(5):
     train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
@@ -54,6 +56,9 @@ for epoch in range(5):
         f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
         f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
     )
+    if val_acc > best_val_acc:
+         best_val_acc = val_acc 
+         torch.save(model.state_dict(), "src/checkpoints/cnn_stage2.pth")
 
 
 #Training of the model whit freezing just the 1st and 2nd convolutional layers
@@ -61,6 +66,7 @@ unfreeze_last_conv_block(model)
 optimizer = torch.optim.Adam(
     get_trainable_parameters(model),
     lr = best_lr * 0.1,
+    weight_decay = best_weight_decay
 )
 
 for epoch in range(5):
@@ -71,3 +77,6 @@ for epoch in range(5):
         f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
         f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
     )
+    if val_acc > best_val_acc:
+         best_val_acc = val_acc 
+         torch.save(model.state_dict(), "src/checkpoints/cnn_stage2.pth")

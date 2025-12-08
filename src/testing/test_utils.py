@@ -4,7 +4,8 @@ import torch
 import matplotlib.pyplot as plt
 from torchvision import transforms 
 
-from src.data_utils import get_dataset_path
+from src.data_utils import (get_raw_dataset_path,
+                            get_white_dataset_path)
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
 
@@ -24,21 +25,27 @@ def get_device() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_test_dataset(transform: transforms.Compose) -> WasteDataset:
-    dataset_path = get_dataset_path()
-    return WasteDataset(dataset_path, split="test", transform=transform)
+def load_test_dataset(transform: transforms.Compose, white:bool = False) -> WasteDataset:
+    if white:
+        dataset_path = get_white_dataset_path()
+    else:
+        dataset_path = get_raw_dataset_path()
+    return WasteDataset(dataset_path, split="test", transform=transform, white = white)
 
 
-def get_best_model_path() -> str:
+def get_best_model_path(white: bool = False) -> str:
     current_file = os.path.abspath(__file__)
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
-    model_path = os.path.join(base_dir, "best_model.pth")
+    if white:
+        model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage2.pth")
+    else:
+        model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage1_A.pth")
     return model_path
 
 
-def load_trained_model(num_classes: int, device: torch.device) -> CNN:
+def load_trained_model(num_classes: int, device: torch.device, white:bool = False) -> CNN:
     model = CNN(num_classes).to(device)
-    model_path = get_best_model_path()
+    model_path = get_best_model_path(white = white)
 
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model not found: {model_path}")
