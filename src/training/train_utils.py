@@ -6,6 +6,7 @@ from torchvision import transforms
 
 from src.data_utils import get_white_dataset_path
 from src.data_utils import get_raw_dataset_path
+from src.data.transforms import get_transform
 
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
@@ -17,18 +18,12 @@ print("Using device:", device)
 
 
 def get_dataloaders(dataset_path, batch_size, white = False):
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        ),
-    ])
+    train_transform = get_transform(split="train", use_augmentation=True)
+    val_test_transform = get_transform(split="val", use_augmentation=False)
 
-    train_dataset = WasteDataset(dataset_path, split='train', transform=transform, white = white)
-    val_dataset = WasteDataset(dataset_path, split='val', transform=transform, white = white)
-    test_dataset = WasteDataset(dataset_path, split='test', transform=transform, white = white)
+    train_dataset = WasteDataset(dataset_path, split='train', transform=train_transform, white = white)
+    val_dataset = WasteDataset(dataset_path, split='val', transform=val_test_transform, white = white)
+    test_dataset = WasteDataset(dataset_path, split='test', transform=val_test_transform, white = white)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
