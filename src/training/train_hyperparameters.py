@@ -11,6 +11,7 @@ def hyperparameter_search_lr_bs():
     num_epochs = 50  # A lot, but early stopping will help
     results = []
     best_global_loss = float("inf")
+    best_global_f1 = -float("inf")
     best_global_config = None
 
     for batch_size in batch_sizes:
@@ -28,32 +29,40 @@ def hyperparameter_search_lr_bs():
 
             best_val_loss = min(history["val_loss"])
             best_val_acc = max(history["val_acc"])
+            best_val_f1 = max(history["val_f1"])
 
             results.append({
                 "batch_size": batch_size,
                 "learning_rate": lr,
                 "best_val_loss": best_val_loss,
                 "best_val_acc": best_val_acc,
+                "best_val_f1": best_val_f1
             })
 
-            if best_val_loss < best_global_loss:
+            if (best_val_f1 > best_global_f1) or \
+                (best_val_f1 == best_global_f1 and best_val_loss < best_global_loss):
+                
+                best_global_f1 = best_val_f1
                 best_global_loss = best_val_loss
                 best_global_config = {
                     "batch_size": batch_size,
                     "learning_rate": lr,
                     "best_val_loss": best_val_loss,
                     "best_val_acc": best_val_acc,
+                    "best_val_f1": best_val_f1
+
                 }
                 torch.save(model.state_dict(), "best_model_lr_bs.pth")
                 print("👉 New partial best model saved to best_model_lr_bs.pth")
 
-    # Mostra i risultati ordinati per validation loss
-    results_sorted = sorted(results, key=lambda x: x["best_val_loss"])
-    print("\n=== Risultati ordinati per best validation loss ===")
+    # Mostra i risultati ordinati per validation f1
+    results_sorted = sorted(results, key=lambda x: x["best_val_f1"])
+    print("\n=== Risultati ordinati per best validation f1 ===")
     for r in results_sorted:
         print(
             f"bs={r['batch_size']}, lr={r['learning_rate']}, "
-            f"val_loss={r['best_val_loss']:.4f}, val_acc={r['best_val_acc']:.4f}"
+            f"val_loss={r['best_val_loss']:.4f}, val_acc={r['best_val_acc']:.4f},"
+            f"val_f1={r['best_val_f1']:.4f}"
         )
 
     return results_sorted, best_global_config
@@ -65,6 +74,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
 
     results = []
     best_global_loss = float("inf")
+    best_global_f1 = -float("inf")
     best_global_config = None
 
     for wd in weight_decays:
@@ -82,6 +92,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
 
         best_val_loss = min(history["val_loss"])
         best_val_acc = max(history["val_acc"])
+        best_val_f1   = max(history["val_f1"])
 
         results.append({
             "batch_size": best_batch_size,
@@ -89,9 +100,13 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
             "weight_decay": wd,
             "best_val_loss": best_val_loss,
             "best_val_acc": best_val_acc,
+            "best_val_f1": best_val_f1
         })
 
-        if best_val_loss < best_global_loss:
+        if (best_val_f1 > best_global_f1) or \
+            (best_val_f1 == best_global_f1 and best_val_loss < best_global_loss):
+
+            best_global_f1 = best_val_f1
             best_global_loss = best_val_loss
             best_global_config = {
                 "batch_size": best_batch_size,
@@ -99,7 +114,9 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
                 "weight_decay": wd,
                 "best_val_loss": best_val_loss,
                 "best_val_acc": best_val_acc,
+                "best_val_f1": best_val_f1
             }
+            
             torch.save({"model_state_dict":model.state_dict(),
                         "batch_size": best_batch_size,
                         "learning_rate": best_lr,
@@ -107,13 +124,14 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
                         }, "src/checkpoints/cnn_stage1_A.pth")
             print("👉 New global best (LR+BS+WD) saved to src/checkpoints/cnn_stage1_A.pth")
 
-    results_sorted = sorted(results, key=lambda x: x["best_val_loss"])
+    results_sorted = sorted(results, key=lambda x: x["best_val_f1"])
 
-    print("\n=== RISULTATI WEIGHT_DECAY (ordinati per best validation loss) ===")
+    print("\n=== RISULTATI WEIGHT_DECAY (ordinati per best validation f1) ===")
     for r in results_sorted:
         print(
             f"wd={r['weight_decay']}, "
-            f"val_loss={r['best_val_loss']:.4f}, val_acc={r['best_val_acc']:.4f}"
+            f"val_loss={r['best_val_loss']:.4f}, val_acc={r['best_val_acc']:.4f},"
+            f"val_f1={r['best_val_f1']:.4f}"   
         )
 
     print("\nMigliore combinazione completa:", best_global_config)

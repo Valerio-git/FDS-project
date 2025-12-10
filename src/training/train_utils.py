@@ -1,8 +1,10 @@
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.optim as optim 
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
+from sklearn.metrics import f1_score, confusion_matrix
 
 from src.data_utils import get_white_dataset_path
 from src.data_utils import get_raw_dataset_path
@@ -67,6 +69,9 @@ def evaluate(model, dataloader, criterion):
     correct = 0
     total = 0
 
+    all_preds = []
+    all_labels = []
+
     with torch.no_grad():
         for images, labels in dataloader:
             images = images.to(device)
@@ -80,10 +85,17 @@ def evaluate(model, dataloader, criterion):
             _, preds = torch.max(outputs, 1)
             correct += (preds == labels).sum().item()
             total += labels.size(0)
+           
+            all_preds.extend(preds.cpu().numpy()) # takes preds tensor and pass them to cpu, extend converts them to lists
+            all_labels.extend(labels.cpu().numpy()) # same process for labels
 
     epoch_loss = running_loss / total
     epoch_acc = correct / total
-    return epoch_loss, epoch_acc
+
+    all_preds = np.array(all_preds) # coverting them into numpy arrays 
+    all_labels = np.array(all_labels)
+
+    return epoch_loss, epoch_acc, all_preds, all_labels
 
     
 def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
@@ -109,6 +121,8 @@ def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 
         "train_acc": [],
         "val_loss": [],
         "val_acc": [],
+        "val_f1": [],
+        "val_conf_mat":[]
     }
 
     best_state_dict = None
@@ -116,17 +130,23 @@ def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 
 
     for epoch in range(num_epochs):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, val_preds, val_labels = evaluate(model, val_loader, criterion)
 
+        val_f1 = f1_score(val_labels, val_preds, average="macro")
+        val_conf_mat = confusion_matrix(val_labels, val_preds)
+
+        
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
         history["val_loss"].append(val_loss)
         history["val_acc"].append(val_acc)
+        history["val_f1"].append(val_f1)
+        history["val_conf_mat"].append(val_conf_mat)
 
         print(
             f"Epoch [{epoch+1}/{num_epochs}] "
             f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f} | "
-            f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
+            f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}, Val_f1: {val_f1:.4f}"
         )
 
         if val_loss < best_val_loss - 1e-4:
