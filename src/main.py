@@ -1,0 +1,45 @@
+import torch
+
+from src.utils.functions import (set_seed, get_device, ask_model_type_from_console)
+from src.training.train_hyperparameters import (hyperparameter_search_lr_bs, 
+                                                hyperparameter_search_weight_decay)
+from src.fine_tuning.fine_tune_CNN import fine_tuning_cnn
+from src.fine_tuning.fine_tune_resnet import fine_tuning_resnet
+from src.testing.test import main
+
+
+
+def pipeline():
+    print ("\n====  Beginning Pipeline  ====\n")
+
+    print("[1] \n--- set seed ---\n")
+    set_seed(42)
+
+    print("[2] \n--- get device ---\n")
+    device = get_device()
+
+    print("[3] \n--- define model--- \n")
+    model_type, white = ask_model_type_from_console
+
+    print("[4] \n--- starting training phase ---\n")
+
+    if not model_type == "resnet":
+        results_lr_bs, best_lr_bs = hyperparameter_search_lr_bs()
+        best_bs = best_lr_bs["batch_size"]
+        best_lr = best_lr_bs["learning_rate"]
+        results_wd, best_full = hyperparameter_search_weight_decay(best_bs, best_lr)
+        print(f"\n best configuration obatined: {best_full}")
+    
+    print("[5] \n--- fine tuning ---\n")
+    if model_type == "cnn":
+        fine_tuning_cnn()
+    elif model_type == "resnet":
+        fine_tuning_resnet()
+    
+    
+    print("[6] \n--- starting testing phase ---\n")
+    main(num_samples = 9, grid_rows= 3, grid_cols = 3, white = white, model_type = model_type)
+    
+    
+    
+
