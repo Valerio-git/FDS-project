@@ -11,3 +11,5 @@ import shutil
 import argparse
 from rembg import remove
 import kagglehub
+import scikit-learn
+import numpy as np

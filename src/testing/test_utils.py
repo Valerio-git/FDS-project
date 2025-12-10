@@ -1,8 +1,10 @@
 import os
 import random
 import torch
+import torch.nn as nn
 import matplotlib.pyplot as plt
-from torchvision import transforms 
+from torchvision import (transforms, models)
+from typing import Literal
 
 from src.data_utils import (get_raw_dataset_path,
                             get_white_dataset_path)
@@ -24,6 +26,7 @@ def build_transform() -> transforms.Compose:
 def get_device() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+ModelType = Literal["cnn", "resnet"]
 
 def load_test_dataset(transform: transforms.Compose, white:bool = False) -> WasteDataset:
     if white:
@@ -33,19 +36,32 @@ def load_test_dataset(transform: transforms.Compose, white:bool = False) -> Wast
     return WasteDataset(dataset_path, split="test", transform=transform, white = white)
 
 
-def get_best_model_path(white: bool = False) -> str:
+def get_best_model_path(white: bool = False, model_type: ModelType = "cnn") -> str:
     current_file = os.path.abspath(__file__)
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
-    if white:
-        model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage2.pth")
+    if model_type == "resnet":
+        model_path = os.path.join(base_dir, "src/checkpoints/resnet_stage2.pth")
+    elif model_type == "cnn":
+        if white:
+            model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage2.pth")
+        else:
+            model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage1_A.pth")
     else:
-        model_path = os.path.join(base_dir, "src/checkpoints/cnn_stage1_A.pth")
-    return model_path
+        raise ValueError(f"Unknown model_type: {model_type}")
+    return str(model_path)
 
 
-def load_trained_model(num_classes: int, device: torch.device, white:bool = False) -> CNN:
-    model = CNN(num_classes).to(device)
-    model_path = get_best_model_path(white = white)
+def load_trained_model(num_classes: int, device: torch.device, white:bool = False, model_type: ModelType = "cnn") -> nn.Module:
+    if model_type == "cnn":
+        model = CNN(num_classes)
+    elif model_type == "resnet":
+        model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
+
+    model = model.to(device)
+
+    model_path = get_best_model_path(white=white, model_type=model_type)
 
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model not found: {model_path}")
@@ -56,7 +72,7 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
     return model
 
 
-def select_random_samples(dataset: WasteDataset, model: CNN, device: torch.device,
+def select_random_samples(dataset: WasteDataset, model: nn.Module, device: torch.device,
                            num_samples: int = 9,
                            ensure_different_labels: bool = True)-> tuple[list[torch.Tensor], list[int], list[int]]:
     
@@ -129,4 +145,3 @@ def plot_predictions(images: list[torch.Tensor], true_labels: list[int],
 
     plt.tight_layout()
     plt.show()
-

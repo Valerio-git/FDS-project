@@ -18,6 +18,7 @@ def hyperparameter_search_lr_bs():
         for lr in learning_rates:
             print(f"\n=== Training with batch_size={batch_size}, lr={lr} ===")
             model, history, _ = train_model(
+                white = False,
                 batch_size=batch_size,
                 num_epochs=num_epochs,
                 learning_rate=lr,
@@ -81,6 +82,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
         print(f"\n=== Training with bs={best_batch_size}, lr={best_lr}, weight_decay={wd} ===")
 
         model, history, _ = train_model(
+            white = False,
             batch_size=best_batch_size,
             num_epochs=num_epochs,
             learning_rate=best_lr,
