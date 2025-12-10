@@ -56,6 +56,9 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
         model = CNN(num_classes)
     elif model_type == "resnet":
         model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+        in_features = model.fc.in_features  # 2048
+        model.fc = nn.Linear(in_features, num_classes)
+        model = model.to(device)
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
 
@@ -73,7 +76,7 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
 
 
 def select_random_samples(dataset: WasteDataset, model: nn.Module, device: torch.device,
-                           num_samples: int = 9,
+                           num_samples: int = 6,
                            ensure_different_labels: bool = True)-> tuple[list[torch.Tensor], list[int], list[int]]:
     
     indices = list(range(len(dataset)))

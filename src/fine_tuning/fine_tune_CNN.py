@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from fine_tuning.fine_tuning import(
+from src.fine_tuning.fine_tuning import(
     load_cnn_from_checkpoint,
     freeze_all_except_classifier,
     unfreeze_last_conv_block,
@@ -53,7 +53,7 @@ def fine_tuning_cnn():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step1 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
@@ -75,7 +75,7 @@ def fine_tuning_cnn():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step2 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "

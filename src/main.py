@@ -5,7 +5,7 @@ from src.training.train_hyperparameters import (hyperparameter_search_lr_bs,
                                                 hyperparameter_search_weight_decay)
 from src.fine_tuning.fine_tune_CNN import fine_tuning_cnn
 from src.fine_tuning.fine_tune_resnet import fine_tuning_resnet
-from src.testing.test import main
+from src.testing.test import testing
 
 
 
@@ -19,7 +19,7 @@ def pipeline():
     device = get_device()
 
     print("[3] \n--- define model--- \n")
-    model_type, white = ask_model_type_from_console
+    model_type, white = ask_model_type_from_console()
 
     print("[4] \n--- starting training phase ---\n")
 
@@ -38,7 +38,10 @@ def pipeline():
     
     
     print("[6] \n--- starting testing phase ---\n")
-    main(num_samples = 9, grid_rows= 3, grid_cols = 3, white = white, model_type = model_type)
+    testing(num_samples = 9, grid_rows= 3, grid_cols = 3, white = white, model_type = model_type)
+
+if __name__ == "__main__":
+    pipeline()
     
     
     

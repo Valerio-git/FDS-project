@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from src.models.resnet import create_resnet50
-from fine_tuning.fine_tuning import (
+from src.fine_tuning.fine_tuning import (
     setup_feature_extraction,
     setup_fine_tuning_last_block,
     get_trainable_parameters
@@ -40,7 +40,7 @@ def fine_tuning_resnet():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step1 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
@@ -61,7 +61,7 @@ def fine_tuning_resnet():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step2 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "

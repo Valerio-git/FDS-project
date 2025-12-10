@@ -7,16 +7,18 @@ from src.testing.test_utils import (
     denormalize_images,
     plot_predictions,
 )
+from src.utils.functions import ask_model_type_from_console
 
-def main(num_samples: int = 9, grid_rows: int = 3, grid_cols: int = 3, model_type = "cnn", white = False):
+def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_type = "cnn", white = False):
     
     device = get_device()
     print(f"Using device: {device}")
 
+    model_type, white = ask_model_type_from_console()
     print(f"User selected model: {model_type}")
 
     transform = build_transform()
-    test_dataset = load_test_dataset(transform)
+    test_dataset = load_test_dataset(transform, white = white)
     num_classes = len(test_dataset.classes)
 
     model = load_trained_model(num_classes=num_classes, device=device, white = white, model_type=model_type)
@@ -40,4 +42,4 @@ def main(num_samples: int = 9, grid_rows: int = 3, grid_cols: int = 3, model_typ
 
 
 if __name__ == "__main__":
-    main()
+    testing()
