@@ -2,12 +2,16 @@ import os
 import random
 import torch
 import torch.nn as nn
+import numpy as np
+from sklearn.metrics import f1_score
+from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
 from torchvision import (transforms, models)
-from typing import Literal
+from typing import (Literal,Tuple)
 
 from src.data_utils import (get_raw_dataset_path,
                             get_white_dataset_path)
+
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
 
@@ -28,12 +32,45 @@ def get_device() -> torch.device:
 
 ModelType = Literal["cnn", "resnet"]
 
-def load_test_dataset(transform: transforms.Compose, white:bool = False) -> WasteDataset:
+def load_test_dataset(transform: transforms.Compose, white:bool = False) -> Tuple[WasteDataset, DataLoader]:
     if white:
         dataset_path = get_white_dataset_path()
     else:
         dataset_path = get_raw_dataset_path()
-    return WasteDataset(dataset_path, split="test", transform=transform, white = white)
+    test_dataset = WasteDataset(dataset_path, split="test", transform=transform, white = white)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    return test_dataset, test_loader
+
+def evaluate_test(model, dataloader, device):
+    model.eval()
+    correct = 0
+    total = 0
+
+    all_preds = []
+    all_labels = []
+
+    with torch.no_grad():
+        for images, labels in dataloader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            _, preds = torch.max(outputs, 1)
+
+            correct += (preds == labels).sum().item()
+            total += labels.size(0)
+           
+            all_preds.extend(preds.cpu().numpy()) # takes preds tensor and pass them to cpu, extend converts them to lists
+            all_labels.extend(labels.cpu().numpy()) # same process for labels
+
+
+    all_preds = np.array(all_preds) # coverting them into numpy arrays 
+    all_labels = np.array(all_labels)
+
+    accuracy = correct/total
+    f1 = f1_score(all_labels, all_preds, average="macro")
+
+    return accuracy, all_preds, all_labels, f1
 
 
 def get_best_model_path(white: bool = False, model_type: ModelType = "cnn") -> str:
