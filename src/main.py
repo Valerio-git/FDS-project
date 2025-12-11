@@ -38,7 +38,7 @@ def pipeline():
     
     
     print("[6] \n--- starting testing phase ---\n")
-    testing(num_samples = 9, grid_rows= 3, grid_cols = 3, white = white, model_type = model_type)
+    testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = white, model_type = model_type)
 
 if __name__ == "__main__":
     pipeline()

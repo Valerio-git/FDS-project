@@ -14,7 +14,6 @@ def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_
     device = get_device()
     print(f"Using device: {device}")
 
-    model_type, white = ask_model_type_from_console()
     print(f"User selected model: {model_type}")
 
     transform = build_transform()
@@ -42,4 +41,6 @@ def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_
 
 
 if __name__ == "__main__":
-    testing()
+
+    model_type, white = ask_model_type_from_console()
+    testing(num_samples = 6, grid_rows = 2, grid_cols = 3, model_type = model_type , white = white)
