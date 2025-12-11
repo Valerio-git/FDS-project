@@ -1,4 +1,5 @@
 import torch
+import time
 
 from src.utils.functions import (set_seed, get_device, ask_model_type_from_console)
 from src.training.train_hyperparameters import (hyperparameter_search_lr_bs, 
@@ -10,14 +11,18 @@ from src.testing.test import testing
 
 
 def pipeline():
+    
     print ("\n====  Beginning Pipeline  ====\n")
-
+    
+    time.sleep(0.5)
     print("[1] \n--- set seed ---\n")
     set_seed(42)
-
+    
+    time.sleep(0.5)
     print("[2] \n--- get device ---\n")
     device = get_device()
-
+    
+    time.sleep(0.5)
     print("[3] \n--- define model--- \n")
     model_type, white = ask_model_type_from_console()
 
@@ -30,15 +35,22 @@ def pipeline():
         results_wd, best_full = hyperparameter_search_weight_decay(best_bs, best_lr)
         print(f"\n best configuration obatined: {best_full}")
     
-    print("[5] \n--- fine tuning ---\n")
-    if model_type == "cnn":
-        fine_tuning_cnn()
-    elif model_type == "resnet":
-        fine_tuning_resnet()
+    if white == True:
+
+        print("[5] \n--- fine tuning ---\n")
+        if model_type == "cnn":
+            fine_tuning_cnn()
+        elif model_type == "resnet":
+            fine_tuning_resnet()
     
     
     print("[6] \n--- starting testing phase ---\n")
     testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = white, model_type = model_type)
+    if white == True and model_type != "resnet":
+        x = input("Do you want to compute results also for raw dataset? ([y]es / [n]o): ").strip().lower() in ("y", "yes")
+        if x:
+            testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = False, model_type = model_type)
+
 
 if __name__ == "__main__":
     pipeline()

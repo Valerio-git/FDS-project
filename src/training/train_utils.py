@@ -95,7 +95,10 @@ def evaluate(model, dataloader, criterion):
     all_preds = np.array(all_preds) # coverting them into numpy arrays 
     all_labels = np.array(all_labels)
 
-    return epoch_loss, epoch_acc, all_preds, all_labels
+    f1 = f1_score(all_labels, all_preds, average="macro")
+    conf_mat = confusion_matrix(all_labels, all_preds)
+
+    return epoch_loss, epoch_acc, all_preds, all_labels, f1, conf_mat
 
     
 def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
@@ -115,6 +118,7 @@ def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
     best_val_loss = float("inf")
+    best_val_f1 = -float("inf")
     
     history = {
         "train_loss": [],
@@ -130,12 +134,8 @@ def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 
 
     for epoch in range(num_epochs):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc, val_preds, val_labels = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, val_preds, val_labels, val_f1, val_conf_mat = evaluate(model, val_loader, criterion)
 
-        val_f1 = f1_score(val_labels, val_preds, average="macro")
-        val_conf_mat = confusion_matrix(val_labels, val_preds)
-
-        
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
         history["val_loss"].append(val_loss)
@@ -149,8 +149,9 @@ def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 
             f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}, Val_f1: {val_f1:.4f}"
         )
 
-        if val_loss < best_val_loss - 1e-4:
-            best_val_loss = val_loss
+        if (val_f1 > best_val_f1) or \
+            (val_f1 == best_val_f1 and val_loss < best_val_loss):
+            best_val_f1 = val_f1
             best_state_dict = model.state_dict()
             epochs_no_improve = 0
         else:

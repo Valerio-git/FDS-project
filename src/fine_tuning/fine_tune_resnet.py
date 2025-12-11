@@ -40,11 +40,12 @@ def fine_tuning_resnet():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _, val_f1, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step1 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
+            f"Valf1={val_f1:.4f}"
         )
         if val_acc > best_val_acc:
             best_val_acc = val_acc 
@@ -61,11 +62,12 @@ def fine_tuning_resnet():
 
     for epoch in range(5):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _, val_f1, _ = evaluate(model, val_loader, criterion)
         print(
             f"[Step2 Epoch {epoch+1}/5] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
+            f"Valf1={val_f1}"
         )
         if val_acc > best_val_acc:
             best_val_acc = val_acc 
