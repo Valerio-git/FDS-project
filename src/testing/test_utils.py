@@ -107,7 +107,10 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
         raise FileNotFoundError(f"Model not found: {model_path}")
 
     state_dict = torch.load(model_path, map_location=device)
-    model.load_state_dict(state_dict)
+    if white:
+        model.load_state_dict(state_dict)
+    else:
+        model.load_state_dict(state_dict["model_state_dict"])
     model.eval()
     return model
 
