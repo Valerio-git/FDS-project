@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim 
 from torchvision import transforms
 
-def hyperparameter_search_lr_bs():
+def hyperparameter_search_lr_bs(seed = 42, num_workers = 0):
     batch_sizes = [16, 32, 64]
     learning_rates = [1e-3, 1e-2, 5e-2]
     num_epochs = 50  # A lot, but early stopping will help
@@ -25,7 +25,10 @@ def hyperparameter_search_lr_bs():
                 model_save_path=None,
                 early_stopping=True,
                 patience=5,
-                weight_decay=0.0
+                weight_decay=0.0,
+                num_workers=num_workers,
+                seed=seed,
+                include_test=False
             )
 
             best_val_loss = min(history["val_loss"])
@@ -68,7 +71,7 @@ def hyperparameter_search_lr_bs():
 
     return results_sorted, best_global_config
 
-def hyperparameter_search_weight_decay(best_batch_size, best_lr):
+def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0, seed = 42):
 
     weight_decays = [0.0, 1e-5, 1e-4, 5e-4]
     num_epochs = 50 
@@ -90,6 +93,9 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr):
             early_stopping=True,
             patience=7,
             weight_decay=wd,
+            num_workers=num_workers,
+            seed=seed,
+            include_test=False
         )
 
         best_val_loss = min(history["val_loss"])

@@ -11,6 +11,13 @@ def set_seed(seed = 42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     
+
+def seed_worker(worker_id: int):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
+
 def get_device():
     return "cuda" if torch.cuda.is_available() else "cpu"
 

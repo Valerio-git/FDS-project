@@ -10,7 +10,7 @@ from src.testing.test_utils import (
 )
 from src.utils.functions import ask_model_type_from_console
 
-def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_type = "cnn", white = False):
+def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_type = "cnn", white = False, seed = 42, num_workers = 0):
     
     device = get_device()
     print(f"Using device: {device}")
@@ -18,7 +18,7 @@ def testing(num_samples: int = 6, grid_rows: int = 2, grid_cols: int = 3, model_
     print(f"User selected model: {model_type}")
 
     transform = build_transform()
-    test_dataset, test_loader = load_test_dataset(transform, white = white)
+    test_dataset, test_loader = load_test_dataset(transform, white = white, seed = seed, num_workers = num_workers)
     num_classes = len(test_dataset.classes)
 
     model = load_trained_model(num_classes=num_classes, device=device, white = white, model_type=model_type)

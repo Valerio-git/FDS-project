@@ -16,7 +16,7 @@ from src.training.train_utils import (
 )
 
 
-def fine_tuning_cnn():
+def fine_tuning_cnn(seed = 42, num_workers = 0):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -27,8 +27,8 @@ def fine_tuning_cnn():
     best_batch_size = checkpoint["batch_size"]
     best_weight_decay = checkpoint["weight_decay"]
 
-    train_dataset, val_dataset, test_dataset, \
-        train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size = best_batch_size, white = True)
+    train_dataset, val_dataset, \
+        train_loader, val_loader = get_dataloaders(dataset_path, batch_size = best_batch_size, white = True, seed = seed, num_workers = num_workers, include_test = False)
 
     ## number of batch size must be the optimal one
 

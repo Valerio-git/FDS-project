@@ -9,6 +9,9 @@ from sklearn.metrics import f1_score, confusion_matrix
 from src.data_utils import get_white_dataset_path
 from src.data_utils import get_raw_dataset_path
 from src.data.transforms import get_transform
+from src.utils.functions import seed_worker
+from src.utils.split_dataset import create_or_load_splits
+
 
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
@@ -19,7 +22,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
 
-def get_dataloaders(dataset_path, batch_size, white = False):
+'''def get_dataloaders(dataset_path, batch_size, white = False):
     train_transform = get_transform(split="train", use_augmentation=True)
     val_test_transform = get_transform(split="val", use_augmentation=False)
 
@@ -30,6 +33,54 @@ def get_dataloaders(dataset_path, batch_size, white = False):
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_dataset, val_dataset, test_dataset, train_loader, val_loader, test_loader'''
+
+
+
+def get_dataloaders(dataset_path, batch_size, white = False, seed = 42, num_workers = 0, include_test = True):
+
+    split_file = "src/splits_white.json" if white else "src/splits_raw.json"
+
+    split_data = create_or_load_splits(
+        root_dir=dataset_path,
+        split_path=split_file,
+        white=white,
+        seed=seed,
+        ratios=(0.6, 0.2, 0.2)
+    )
+
+    train_transform = get_transform(split="train", use_augmentation=True)
+    val_test_transform = get_transform(split="val", use_augmentation=False)
+
+    classes = split_data["classes"]
+    train_items = split_data["splits"]["train"]
+    val_items = split_data["splits"]["val"]
+    test_items = split_data["splits"]["test"]
+
+    train_dataset = WasteDataset(train_items, classes=classes, transform=train_transform)
+    val_dataset   = WasteDataset(val_items,   classes=classes, transform=val_test_transform)
+
+    g = torch.Generator().manual_seed(seed)
+
+    train_loader = DataLoader(
+        train_dataset, batch_size=batch_size, shuffle=True,
+        num_workers=num_workers, worker_init_fn=seed_worker, generator=g
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=batch_size, shuffle=False,
+        num_workers=num_workers, worker_init_fn=seed_worker, generator=g
+    )
+
+    if not include_test:
+        return train_dataset, val_dataset, train_loader, val_loader
+    
+    test_dataset  = WasteDataset(test_items,  classes=classes, transform=val_test_transform)
+
+    test_loader = DataLoader(
+        test_dataset, batch_size=batch_size, shuffle=False,
+        num_workers=num_workers, worker_init_fn=seed_worker, generator=g
+    )
 
     return train_dataset, val_dataset, test_dataset, train_loader, val_loader, test_loader
 
@@ -101,15 +152,20 @@ def evaluate(model, dataloader, criterion):
     return epoch_loss, epoch_acc, all_preds, all_labels, f1, conf_mat
 
     
-def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0):
+def train_model(white = False, batch_size = 32, num_epochs = 5, learning_rate = 1e-3, model_save_path=None, early_stopping = False, patience = 5, weight_decay = 0.0, seed=42, num_workers=0, include_test = False):
     
     if white:
         dataset_path = get_white_dataset_path()
     else:
         dataset_path = get_raw_dataset_path()
 
-    train_dataset, val_dataset, test_dataset, \
-        train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size, white = white)
+    if include_test:
+        train_dataset, val_dataset, test_dataset, \
+            train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size, white = white,seed = seed, num_workers = num_workers, include_test = True)
+    else:
+        train_dataset, val_dataset, \
+            train_loader, val_loader = get_dataloaders(dataset_path, batch_size, white = white, seed = seed, num_workers = num_workers, include_test = False)
+        test_dataset, test_loader = None, None
 
     num_classes = len(train_dataset.classes)
     model = CNN(num_classes).to(device)

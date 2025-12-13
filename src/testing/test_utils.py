@@ -11,6 +11,8 @@ from typing import (Literal,Tuple)
 
 from src.data_utils import (get_raw_dataset_path,
                             get_white_dataset_path)
+from src.utils.functions import seed_worker
+from src.utils.split_dataset import create_or_load_splits
 
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
@@ -32,14 +34,41 @@ def get_device() -> torch.device:
 
 ModelType = Literal["cnn", "resnet"]
 
-def load_test_dataset(transform: transforms.Compose, white:bool = False) -> Tuple[WasteDataset, DataLoader]:
+'''def load_test_dataset(transform: transforms.Compose, white:bool = False) -> Tuple[WasteDataset, DataLoader]:
     if white:
         dataset_path = get_white_dataset_path()
     else:
         dataset_path = get_raw_dataset_path()
     test_dataset = WasteDataset(dataset_path, split="test", transform=transform, white = white)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    return test_dataset, test_loader'''
+
+def load_test_dataset(transform, white=False, seed=42, num_workers=0):
+    dataset_path = get_white_dataset_path() if white else get_raw_dataset_path()
+    split_file = "src/splits/splits_white.json" if white else "src/splits/splits_raw.json"
+
+    split_data = create_or_load_splits(
+        root_dir=dataset_path,
+        split_path=split_file,
+        white=white,
+        seed=seed,
+        ratios=(0.6, 0.2, 0.2),
+    )
+
+    classes = split_data["classes"]
+    test_items = split_data["splits"]["test"]
+
+    test_dataset = WasteDataset(test_items, classes=classes, transform=transform)
+
+    g = torch.Generator().manual_seed(seed)
+
+    test_loader = DataLoader(
+        test_dataset, batch_size=32, shuffle=False,
+        num_workers=num_workers, worker_init_fn=seed_worker, generator=g
+    )
     return test_dataset, test_loader
+
+
 
 def evaluate_test(model, dataloader, device):
     model.eval()

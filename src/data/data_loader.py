@@ -8,7 +8,7 @@ from src.data_utils import get_white_dataset_path
 
 
 # Define the dataset class (modified to include a split parameter)
-class WasteDataset(Dataset):
+'''class WasteDataset(Dataset):
     def __init__(self, root_dir = None, split = 'train', transform=None, white = False):
         if white:
             root_dir = get_white_dataset_path()
@@ -67,4 +67,31 @@ class WasteDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         
+        return image, label'''
+
+
+from torch.utils.data import Dataset
+from PIL import Image
+
+class WasteDataset(Dataset):
+    def __init__(self, items, classes, transform=None):
+        """
+        items: lista di dict {"path": ..., "label": ...}
+        classes: lista nomi classi (in ordine label)
+        """
+        self.items = items
+        self.classes = classes
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.items)
+
+    def __getitem__(self, index):
+        item = self.items[index]
+        image = Image.open(item["path"]).convert("RGB")
+        label = item["label"]
+
+        if self.transform:
+            image = self.transform(image)
+
         return image, label

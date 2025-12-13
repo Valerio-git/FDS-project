@@ -17,15 +17,15 @@ from src.training.train_utils import (
 )
 
 
-def fine_tuning_resnet():
+def fine_tuning_resnet(seed = 42, num_workers = 0):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     dataset_path = get_white_dataset_path()
 
-    train_dataset, val_dataset, test_dataset, \
-        train_loader, val_loader, test_loader = get_dataloaders(dataset_path, batch_size = 64, white = True)
+    train_dataset, val_dataset, \
+        train_loader, val_loader = get_dataloaders(dataset_path, batch_size = 64, white = True, seed = seed, num_workers = num_workers, include_test = False)
 
-    model = create_resnet50(len(train_dataset.classes))
+    model = create_resnet50(len(train_dataset.classes)).to(device)
 
 
     #Training of just the fully connected layers
