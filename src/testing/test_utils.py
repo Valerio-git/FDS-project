@@ -136,11 +136,9 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
         raise FileNotFoundError(f"Model not found: {model_path}")
 
     state_dict = torch.load(model_path, map_location=device)
-    if white:
-        model.load_state_dict(state_dict)
-    else:
-        model.load_state_dict(state_dict["model_state_dict"])
+    model.load_state_dict(state_dict["model_state_dict"])
     model.eval()
+    
     return model
 
 
@@ -217,3 +215,6 @@ def plot_predictions(images: list[torch.Tensor], true_labels: list[int],
 
     plt.tight_layout()
     plt.show()
+
+if __name__ == "__main__":
+    load_trained_model(num_classes=3, device=get_device(), white=True, model_type="resnet")

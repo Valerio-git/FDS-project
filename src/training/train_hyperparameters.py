@@ -129,6 +129,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
                         "batch_size": best_batch_size,
                         "learning_rate": best_lr,
                         "weight_decay": wd,
+                        "training_history": history
                         }, "src/checkpoints/cnn_stage1_A.pth")
             print("👉 New global best (LR+BS+WD) saved to src/checkpoints/cnn_stage1_A.pth")
 

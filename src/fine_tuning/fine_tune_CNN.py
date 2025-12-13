@@ -39,6 +39,14 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
         device=device,
     )
 
+    history = {
+        "train_loss": [],
+        "train_acc": [],
+        "val_loss": [],
+        "val_acc": [],
+        "val_f1": [],
+        "val_conf_mat":[]
+    }
 
     #Training of just the fully connected layers
     freeze_all_except_classifier(model)
@@ -51,20 +59,31 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
     criterion = nn.CrossEntropyLoss()
     best_val_acc = -float("inf")
 
-    for epoch in range(5):
+    for epoch in range(10):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc, _, _, val_f1, _ = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _, val_f1, val_conf_mat = evaluate(model, val_loader, criterion)
+
+        history["train_loss"].append(train_loss)
+        history["train_acc"].append(train_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
+        history["val_f1"].append(val_f1)
+        history["val_conf_mat"].append(val_conf_mat)
+
         print(
-            f"[Step1 Epoch {epoch+1}/5] "
+            f"[Step1 Epoch {epoch+1}/10] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
             f"Valf1={val_f1:.4f}"
         )
         if val_acc > best_val_acc:
             best_val_acc = val_acc 
-            torch.save(model.state_dict(), "src/checkpoints/cnn_stage2.pth")
+            torch.save({"model_state_dict":model.state_dict(),
+                        "training_history": history
+                        }, "src/checkpoints/cnn_stage2.pth")
 
-    model.load_state_dict(torch.load("src/checkpoints/cnn_stage2.pth", map_location=device))
+    state_dict = torch.load("src/checkpoints/cnn_stage2.pth", map_location = device)
+    model.load_state_dict(state_dict["model_state_dict"])
 
     #Training of the model whit freezing just the 1st and 2nd convolutional layers
     unfreeze_last_conv_block(model)
@@ -74,11 +93,19 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
         weight_decay = best_weight_decay
     )
 
-    for epoch in range(5):
+    for epoch in range(10):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc, _, _, val_f1, _ = evaluate(model, val_loader, criterion)
+        val_loss, val_acc, _, _, val_f1, val_conf_mat = evaluate(model, val_loader, criterion)
+
+        history["train_loss"].append(train_loss)
+        history["train_acc"].append(train_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
+        history["val_f1"].append(val_f1)
+        history["val_conf_mat"].append(val_conf_mat)
+
         print(
-            f"[Step2 Epoch {epoch+1}/5] "
+            f"[Step2 Epoch {epoch+1}/10] "
             f"TrainLoss={train_loss:.4f}, TrainAcc={train_acc:.4f} | "
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
             f"Valf1={val_f1:.4f}"
