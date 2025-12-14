@@ -84,6 +84,8 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
 
     state_dict = torch.load("src/checkpoints/cnn_stage2.pth", map_location = device)
     model.load_state_dict(state_dict["model_state_dict"])
+    state_dict["training_history"] = history
+    torch.save(state_dict, "src/checkpoints/cnn_stage2.pth")
 
     #Training of the model whit freezing just the 1st and 2nd convolutional layers
     unfreeze_last_conv_block(model)
@@ -112,7 +114,12 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
         )
         if val_acc > best_val_acc:
             best_val_acc = val_acc 
-            torch.save(model.state_dict(), "src/checkpoints/cnn_stage2.pth")
+            torch.save({"model_state_dict":model.state_dict(),
+                        "training_history": history
+                        }, "src/checkpoints/cnn_stage2.pth")
+    state_dict = torch.load("src/checkpoints/cnn_stage2.pth", map_location = device)
+    state_dict["training_history"] = history
+    torch.save(state_dict, "src/checkpoints/cnn_stage2.pth")
 
 if __name__ == "__main__":
     fine_tuning_cnn()
