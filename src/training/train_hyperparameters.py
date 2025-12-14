@@ -132,6 +132,11 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
                         "training_history": history
                         }, "src/checkpoints/cnn_stage1_A.pth")
             print("👉 New global best (LR+BS+WD) saved to src/checkpoints/cnn_stage1_A.pth")
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    state_dict = torch.load("src/checkpoints/cnn_stage1_A.pth", map_location = device)
+    state_dict["training_history"] = history
+    torch.save(state_dict, "src/checkpoints/cnn_stage2.pth")
 
     results_sorted = sorted(results, key=lambda x: x["best_val_f1"])
 
