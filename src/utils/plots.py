@@ -33,11 +33,10 @@ def plot_training_CNN_no_finetune():
     plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("loss")
-    plt.title("CNN (no finetune) loss")
+    plt.title("CNN (raw dataset) loss")
     plt.legend()
     plt.grid(True)
-    plt.show()
-    plt.savefig("cnn_no_finetune_loss.png", bbox_inches="tight")
+    plt.savefig("cnn_raw_dataset_loss.png", bbox_inches="tight")
     plt.close()
 
     # accuracy
@@ -47,11 +46,10 @@ def plot_training_CNN_no_finetune():
     plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("accuracy")
-    plt.title("CNN (no finetune) accuracy")
+    plt.title("CNN (raw dataset) accuracy")
     plt.legend()
     plt.grid(True)
-    plt.show()
-    plt.savefig("cnn_no_finetune_accuracy.png", bbox_inches="tight")
+    plt.savefig("cnn_raw_dataset_accuracy.png", bbox_inches="tight")
     plt.close()
 
     # F1 validation
@@ -61,10 +59,9 @@ def plot_training_CNN_no_finetune():
     plt.legend()
     plt.xlabel("epoch")
     plt.ylabel("F1 macro (val)")
-    plt.title("CNN (no finetune) F1 macro validation")
+    plt.title("CNN (raw dataset) F1 macro validation")
     plt.grid(True)
-    plt.show()
-    plt.savefig("cnn_no_finetune_f1.png", bbox_inches="tight")
+    plt.savefig("cnn_raw_dataset_f1.png", bbox_inches="tight")
     plt.close()
 
 # in fine_tune_CNN.py must be added the saving of training history like this:
@@ -97,7 +94,6 @@ def plot_training_CNN_finetune():
     plt.title("CNN (finetuned) loss")
     plt.legend()
     plt.grid(True)
-    plt.show()
     plt.savefig("cnn_finetuned_loss.png", bbox_inches="tight")
     plt.close()
 
@@ -112,7 +108,6 @@ def plot_training_CNN_finetune():
     plt.title("CNN (finetuned) accuracy")
     plt.legend()
     plt.grid(True)
-    plt.show()
     plt.savefig("cnn_finetuned_accuracy.png", bbox_inches="tight")
     plt.close()
 
@@ -126,7 +121,6 @@ def plot_training_CNN_finetune():
     plt.ylabel("F1 macro (val)")
     plt.title("CNN (finetuned) F1 macro validation")
     plt.grid(True)
-    plt.show()
     plt.savefig("cnn_finetuned_f1.png", bbox_inches="tight")
     plt.close()
 
@@ -161,7 +155,6 @@ def plot_resnet():
     plt.title("ResNet50 loss")
     plt.legend()
     plt.grid(True)
-    plt.show()
     plt.savefig("resnet50_loss.png", bbox_inches="tight")
     plt.close()
 
@@ -176,7 +169,6 @@ def plot_resnet():
     plt.title("ResNet50 accuracy")
     plt.legend()
     plt.grid(True)
-    plt.show()
     plt.savefig("resnet50_accuracy.png", bbox_inches="tight")
     plt.close()
 
@@ -190,7 +182,6 @@ def plot_resnet():
     plt.ylabel("F1 macro (val)")
     plt.title("ResNet50 F1 macro validation")
     plt.grid(True)
-    plt.show()
     plt.savefig("resnet50_f1.png", bbox_inches="tight")
     plt.close()
 
