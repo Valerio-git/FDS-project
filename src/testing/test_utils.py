@@ -45,7 +45,7 @@ ModelType = Literal["cnn", "resnet"]
 
 def load_test_dataset(transform, white=False, seed=42, num_workers=0):
     dataset_path = get_white_dataset_path() if white else get_raw_dataset_path()
-    split_file = "src/splits/splits_white.json" if white else "src/splits/splits_raw.json"
+    split_file = "src/splits_white.json" if white else "src/splits_raw.json"
 
     split_data = create_or_load_splits(
         root_dir=dataset_path,
