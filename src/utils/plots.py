@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import torch
 
+train_color = "#0E4111"
+val_color   = "#04CA0E"
+epoch_color  = "#187D94"
+
 # in train_hyperparameters.py must be added the saving of training history like this:
 '''torch.save({"model_state_dict":model.state_dict(),
                         "batch_size": best_batch_size,
@@ -27,10 +31,10 @@ def plot_training_CNN_no_finetune():
     last_epoch = val_f1.index(max(val_f1)) + 1
 
     # loss
-    plt.figure()
-    plt.plot(epochs, val_loss, label="val")
-    plt.plot(epochs, train_loss, label="train")
-    plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_loss, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_loss, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=last_epoch, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
     plt.xlabel("epoch")
     plt.ylabel("loss")
     plt.title("CNN (raw dataset) loss")
@@ -40,10 +44,10 @@ def plot_training_CNN_no_finetune():
     plt.close()
 
     # accuracy
-    plt.figure()
-    plt.plot(epochs, val_acc, label="val")
-    plt.plot(epochs, train_acc, label="train")
-    plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_acc, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_acc, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=last_epoch, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
     plt.xlabel("epoch")
     plt.ylabel("accuracy")
     plt.title("CNN (raw dataset) accuracy")
@@ -53,15 +57,71 @@ def plot_training_CNN_no_finetune():
     plt.close()
 
     # F1 validation
-    plt.figure()
-    plt.plot(epochs, val_f1, label="val F1")
-    plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_f1, label="val F1", linewidth=1.6, color = val_color)
+    plt.axvline(x=last_epoch, linestyle='--', label=r"$\mathrm{1^{\text{st}} / 2^{\text{nd}}\ step}$", linewidth=1.2, color = epoch_color)
     plt.legend()
     plt.xlabel("epoch")
     plt.ylabel("F1 macro (val)")
     plt.title("CNN (raw dataset) F1 macro validation")
     plt.grid(True)
     plt.savefig("cnn_raw_dataset_f1.png", bbox_inches="tight")
+    plt.close()
+
+
+def plot_training_CNN_white():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    checkpoint = torch.load("src/checkpoints/white_cnn_stage1_A.pth", map_location=device)
+    history = checkpoint["training_history"]
+    best_lr = checkpoint["learning_rate"]
+    best_batch_size = checkpoint["batch_size"]
+    best_weight_decay = checkpoint["weight_decay"]
+
+    train_loss = history["train_loss"]
+    train_acc  = history["train_acc"]
+    val_loss   = history["val_loss"]
+    val_acc    = history["val_acc"]
+    val_f1     = history["val_f1"]
+
+    epochs = range(1, len(train_loss) + 1)
+    last_epoch = val_f1.index(max(val_f1)) + 1
+
+    # loss
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_loss, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_loss, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=last_epoch, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.title("CNN (white dataset) loss")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("cnn_white_dataset_loss.png", bbox_inches="tight")
+    plt.close()
+
+    # accuracy
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_acc, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_acc, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=last_epoch, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.title("CNN (white dataset) accuracy")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("cnn_white_dataset_accuracy.png", bbox_inches="tight")
+    plt.close()
+
+    # F1 validation
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_f1, label="val F1", linewidth=1.6, color = val_color)
+    plt.axvline(x=last_epoch, linestyle='--', label=r"$\mathrm{1^{\text{st}} / 2^{\text{nd}}\ step}$", linewidth=1.2, color = epoch_color)
+    plt.legend()
+    plt.xlabel("epoch")
+    plt.ylabel("F1 macro (val)")
+    plt.title("CNN (white dataset) F1 macro validation")
+    plt.grid(True)
+    plt.savefig("cnn_white_dataset_f1.png", bbox_inches="tight")
     plt.close()
 
 # in fine_tune_CNN.py must be added the saving of training history like this:
@@ -84,10 +144,10 @@ def plot_training_CNN_finetune():
     last_epoch = val_f1.index(max(val_f1)) + 1
 
     # loss
-    plt.figure()
-    plt.plot(epochs, val_loss, label="val")
-    plt.plot(epochs, train_loss, label="train")
-    plt.axvline(x=10, color='r', linestyle='--')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_loss, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_loss, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=10, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
     #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("loss")
@@ -98,10 +158,10 @@ def plot_training_CNN_finetune():
     plt.close()
 
     # accuracy
-    plt.figure()
-    plt.plot(epochs, val_acc, label="val")
-    plt.plot(epochs, train_acc, label="train")
-    plt.axvline(x=10, color='r', linestyle='--')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_acc, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_acc, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=10, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
     #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("accuracy")
@@ -112,9 +172,9 @@ def plot_training_CNN_finetune():
     plt.close()
 
     # F1 validation
-    plt.figure()
-    plt.plot(epochs, val_f1, label="val F1")
-    plt.axvline(x=10, color='r', linestyle='--')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_f1, label="val F1", linewidth=1.6, color = val_color)
+    plt.axvline(x=10, linestyle='--', label=r"$\mathrm{1^{\text{st}} / 2^{\text{nd}}\ step}$", linewidth=1.2, color = epoch_color)
     #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.legend()
     plt.xlabel("epoch")
@@ -145,10 +205,10 @@ def plot_resnet():
     last_epoch = val_f1.index(max(val_f1)) + 1
 
     # loss
-    plt.figure()
-    plt.plot(epochs, val_loss, label="val")
-    plt.plot(epochs, train_loss, label="train")
-    plt.axvline(x=10, color='r', linestyle='--')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_loss, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_loss, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=10, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
     #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("loss")
@@ -159,11 +219,11 @@ def plot_resnet():
     plt.close()
 
     # accuracy
-    plt.figure()
-    plt.plot(epochs, val_acc, label="val")
-    plt.plot(epochs, train_acc, label="train")
-    plt.axvline(x=10, color='r', linestyle='--')
-    #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_acc, label="val", linewidth=1.6, color = val_color)
+    plt.plot(epochs, train_acc, label="train", linewidth=1.6, color = train_color)
+    plt.axvline(x=10, linestyle='--', label='best epoch', linewidth=1.2, color = epoch_color)
+    #plt.axvline(x=last_epoch, color='r ', linestyle='--', label='best epoch')
     plt.xlabel("epoch")
     plt.ylabel("accuracy")
     plt.title("ResNet50 accuracy")
@@ -173,9 +233,9 @@ def plot_resnet():
     plt.close()
 
     # F1 validation
-    plt.figure()
-    plt.plot(epochs, val_f1, label="val F1")
-    plt.axvline(x=10, color='r', linestyle='--')
+    plt.figure(figsize=(8, 4.5), dpi=150)
+    plt.plot(epochs, val_f1, label="val F1", linewidth=1.6, color = val_color)
+    plt.axvline(x=10, linestyle='--', label=r"$\mathrm{1^{\text{st}} / 2^{\text{nd}}\ step}$", linewidth=1.2, color = epoch_color)
     #plt.axvline(x=last_epoch, color='r', linestyle='--', label='best epoch')
     plt.legend()
     plt.xlabel("epoch")
@@ -187,5 +247,6 @@ def plot_resnet():
 
 if __name__ == "__main__":
     plot_training_CNN_no_finetune()
+    plot_training_CNN_white()
     plot_training_CNN_finetune()
     plot_resnet()
