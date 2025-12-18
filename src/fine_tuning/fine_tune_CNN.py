@@ -57,7 +57,7 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
     )
 
     criterion = nn.CrossEntropyLoss()
-    best_val_acc = -float("inf")
+    best_val_f1 = -float("inf")
 
     for epoch in range(10):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
@@ -76,8 +76,8 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
             f"Valf1={val_f1:.4f}"
         )
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc 
+        if val_f1 > best_val_f1:
+            best_val_f1 = val_f1 
             torch.save({"model_state_dict":model.state_dict(),
                         "training_history": history
                         }, "src/checkpoints/cnn_stage2.pth")
@@ -112,8 +112,8 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
             f"ValLoss={val_loss:.4f}, ValAcc={val_acc:.4f}"
             f"Valf1={val_f1:.4f}"
         )
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc 
+        if val_f1 > best_val_f1:
+            best_val_f1 = val_f1 
             torch.save({"model_state_dict":model.state_dict(),
                         "training_history": history
                         }, "src/checkpoints/cnn_stage2.pth")

@@ -43,3 +43,9 @@ def confusion_matrix_resnet():
     conf_mat = history["val_conf_mat"][last_epoch - 1]
 
     return conf_mat
+
+if __name__ == "__main__":
+    print(confusion_matrix_CNN_raw())
+    print(confusion_matrix_CNN_white())
+    print(confusion_matrix_CNN_finetune())
+    print(confusion_matrix_resnet())
