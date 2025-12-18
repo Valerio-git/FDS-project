@@ -13,6 +13,7 @@ from src.data_utils import (get_raw_dataset_path,
                             get_white_dataset_path)
 from src.utils.functions import seed_worker
 from src.utils.split_dataset import create_or_load_splits
+from src.models.resnet import create_resnet50
 
 from src.data.data_loader import WasteDataset
 from src.models.CNN import CNN
@@ -121,10 +122,7 @@ def load_trained_model(num_classes: int, device: torch.device, white:bool = Fals
     if model_type == "cnn":
         model = CNN(num_classes)
     elif model_type == "resnet":
-        model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
-        in_features = model.fc.in_features  # 2048
-        model.fc = nn.Linear(in_features, num_classes)
-        model = model.to(device)
+        model = create_resnet50(num_classes)
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
 
