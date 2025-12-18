@@ -39,10 +39,11 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
     setup_feature_extraction(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),
-        lr = 0.001
+        lr = 0.001,
+        weight_decay=1e-4
     )
 
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     best_val_acc = -float("inf")
 
     for epoch in range(10):
@@ -77,7 +78,8 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
     setup_fine_tuning_last_block(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),
-        lr = 0.0001
+        lr = 0.0001, 
+        weight_decay=1e-4
     )
 
     for epoch in range(10):
