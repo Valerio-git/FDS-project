@@ -1,35 +1,26 @@
 # FDS-project
 
----CNN---
+This is the code for our FDS-projects inspierd to **hooly** the smart bin built by the italian start-up *Gaina.ay*.
 
-Cose che si possono modificare manualmente (e quindi cose da provare per ottenere il miglior risultato possibile):
+The structure of the code it's inside the src folder.
 
-1) Parametri convoluzione:
-   - ~~Kernel size (dimensione del filtro (es. 3×3, 5×5))~~
-   - ~~Stride (di quanto si sposta il filtro a ogni passo. Stride > 1 = riduzione della risoluzione (downsampling))~~
-   - ~~Padding (pixel aggiunti intorno all’immagine per controllare la dimensione dell’output)~~
-   - ~~Numero di filtri = out_channels (ogni feature map produce un layer)~~
-2) ~~Funzione di attivazione (ReLU, LeakyReLU, PReLU, GELU)~~
-3) ~~Normalizzazioni (Batch Normalization, Layer Normalization)~~
-4) ~~Pooling (max, average)~~
-5) ~~Inizializzazione pesi (Xavier/Glorot per tanh/sigmoid, Kaiming/He per ReLU)~~
-6) ~~Regolarizzazione (Dropout, Inverted Dropout, DropBlock)~~
-7) Data augmentation
-8) Struttura della rete (profondità, larghezza, skip connections)
-9) Parametri di training:
-    - ~~Learning rate~~
-    - ~~Learning rate schedule~~
-    - ~~Ottimizzatore~~
-    - ~~Batch size~~
-    - ~~Early stopping~~
+## File main
+The file *main* contains the entire pipeline to execute the code. 
 
-Da fare:
-- Aggiungere i seed
-- Switchare alle etichette generiche
-- Modificare fully connected layers
-- Modificare fine_tune.py per salvare modello per testing
-- Aggiungere altre metriche e usarle in train_hyperparameters.py
-- Fine tuning con modello preaddestrato
-- Aggiungere un altro modello
-- Aggiungere file *main* con pipeline che esegua tutto il codice
-- Data Analysis e plotting (training/validation loss,...)
+## Folder models 
+It contains:
+-  CCN.py in which there's the implememtation of our custom-built CNN.
+- resnet.py which contains the script for updloading the pre-trained model *resnet50*.
+
+## Folder training
+All the codes for the training of the model and its validation are contained in the folder *training*
+- *train_utils* contains the functions required to load and split the dataset, the functions for training the model and for validating it
+- *train_hyperparameters.py* calls back all the functions in *train_utils.py* and uses them not only to train and validate the model but also to implement a grid search to find the best:
+    - learning rate
+    - batch size
+    - weight decay 
+
+## Folder fine tuning
+This folder contains the main file *fine_tuning.py* which contains the function used during the fine tuning of both the CNN and resnet50 on the **white dataset**.
+*Fine_tune_CNN.py* trains the and validates finetuned *CNN* on the new white dataset using as optimal values for batch size, learning rate and weight decay the ones found during the grid search.
+*Fine_tune_resnet.py* trains the and validates finetuned *resent50* on the new whitedates 
