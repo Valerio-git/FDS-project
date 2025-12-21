@@ -1,6 +1,6 @@
 import torchvision.transforms as T
 
-# ========== TRASFORMAZIONI BASE (senza augmentation) ==========
+# ========== BASIC TRANSFORMATIONS (NO AUGMENTATION) ==========
 no_aug_transform = T.Compose([
     T.Resize((224, 224)),
     T.ToTensor(),
@@ -10,20 +10,20 @@ no_aug_transform = T.Compose([
     )
 ])
 
-# ========== TRASFORMAZIONI CON AUGMENTATION (SOLO TRAINING) ==========
+# ========== TRANSFORMATIONS WITH AUGMENTATION (ONLY TRAINING) ==========
 train_aug_transform = T.Compose([
     T.Resize((224, 224)),
-    T.RandomHorizontalFlip(p=0.5),                  # flip orizzontale
-    T.RandomRotation(degrees=15),                   # rotazioni leggere
+    T.RandomHorizontalFlip(p=0.5),                   # horizontal flip
+    T.RandomRotation(degrees=15),                    # little rotation
     T.RandomAffine(
         degrees=0,
-        translate=(0.05, 0.05)                     # piccoli shift
+        translate=(0.05, 0.05)                       # small shifts
     ),
     T.ColorJitter(
         brightness=0.1,
         contrast=0.1,
         saturation=0.1
-    ),                                              # leggere variazioni di colore
+    ),                                               # slight color variations
     T.ToTensor(),
     T.Normalize(
         mean=[0.485, 0.456, 0.406],
@@ -31,7 +31,8 @@ train_aug_transform = T.Compose([
     )
 ])
 
-# ========== TRASFORMAZIONI PER VALIDATION / TEST ==========
+# ========== TRANSFORMATIONS FOR VALIDATION / TEST ==========
+
 val_test_transform = T.Compose([
     T.Resize((224, 224)),
     T.ToTensor(),
@@ -44,11 +45,11 @@ val_test_transform = T.Compose([
 
 def get_transform(split: str = "train", use_augmentation: bool = True):
     """
-    Restituisce la trasformazione corretta in base allo split e all'uso di augmentation.
+    Returns the correct transformation based on the split and whether augmentation is used.
 
-    - split = 'train'  e use_augmentation=True  → train_aug_transform
-    - split = 'train'  e use_augmentation=False → no_aug_transform
-    - split = 'val'/'test'                      → val_test_transform
+    - split = 'train' and use_augmentation=True → train_aug_transform
+    - split = 'train' and use_augmentation=False → no_aug_transform
+    - split = 'val'/'test' → val_test_transform
     """
     if split == "train":
         if use_augmentation:

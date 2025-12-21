@@ -40,13 +40,10 @@ def extract_kernel_CNN_no_finetune(num_cols=8, title=""):
 
         img = ker.mean(dim=0).numpy()
 
-        # Normalizzazione per visualizzare
+        # Normalization for visualization
         #ker = (ker - ker.min()) / (ker.max() - ker.min() + 1e-8)
         img = (img - img.min()) / (img.max() - img.min() + 1e-8)
 
-        # caso RGB (3 canali)
-        #img = ker.permute(1, 2, 0).numpy()  # [H,W,3]
-        #ax.imshow(img)
         ax.imshow(img, cmap="gray")
 
         ax.axis("off")
@@ -60,7 +57,7 @@ def extract_kernel_CNN_no_finetune(num_cols=8, title=""):
 def extract_kernel_resnet(num_cols=8, title=""):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
-    in_features = model.fc.in_features  # 2048
+    in_features = model.fc.in_features
     model.fc = nn.Linear(in_features, 7)
     model = model.to(device)
 
@@ -81,10 +78,9 @@ def extract_kernel_resnet(num_cols=8, title=""):
 
         ker = kernels[idx]
 
-        # Normalizzazione per visualizzare
+        # Normalization for visualization
         ker = (ker - ker.min()) / (ker.max() - ker.min() + 1e-8)
 
-        # caso RGB (3 canali)
         img = ker.permute(1, 2, 0).numpy()  # [H,W,3]
         ax.imshow(img)
 

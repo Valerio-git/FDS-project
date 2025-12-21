@@ -21,23 +21,6 @@ from src.models.CNN import CNN
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-
-'''def get_dataloaders(dataset_path, batch_size, white = False):
-    train_transform = get_transform(split="train", use_augmentation=True)
-    val_test_transform = get_transform(split="val", use_augmentation=False)
-
-    train_dataset = WasteDataset(dataset_path, split='train', transform=train_transform, white = white)
-    val_dataset = WasteDataset(dataset_path, split='val', transform=val_test_transform, white = white)
-    test_dataset = WasteDataset(dataset_path, split='test', transform=val_test_transform, white = white)
-
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
-    return train_dataset, val_dataset, test_dataset, train_loader, val_loader, test_loader'''
-
-
-
 def get_dataloaders(dataset_path, batch_size, white = False, seed = 42, num_workers = 0, include_test = True):
 
     split_file = "src/splits_white.json" if white else "src/splits_raw.json"

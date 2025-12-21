@@ -76,8 +76,8 @@ from PIL import Image
 class WasteDataset(Dataset):
     def __init__(self, items, classes, transform=None):
         """
-        items: lista di dict {"path": ..., "label": ...}
-        classes: lista nomi classi (in ordine label)
+        items: list of dict {"path": ..., "label": ...}
+        classes: list of class names (in order of label)
         """
         self.items = items
         self.classes = classes

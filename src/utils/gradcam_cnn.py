@@ -61,7 +61,7 @@ def gradcam_grid(model, dataset, device, n=6, rows=2, cols=3, seed=0):
 
         cam, pred, probs = grad_cam_cnn(model, x1, class_idx=None, target_module=model.bn3)
 
-        # immagine per plot
+        # Picture per plot
         img = denorm_imagenet(x).permute(1,2,0).cpu().numpy()
 
         true_name = dataset.classes[y] if hasattr(dataset, "classes") else str(y)

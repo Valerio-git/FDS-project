@@ -18,30 +18,30 @@ def load_cnn_from_checkpoint(checkpoint_path: str, num_classes: int,
 
 def freeze_all_except_classifier(model: CNN) -> None:
     """
-    STEP 1 del fine-tuning:
-    - congela tutti i layer convoluzionali
-    - allena solo il classifier (fc1 e fc2)
+    STEP 1 fine-tuning:
+    - freeze all convolutional layers
+    - train only the classifier (fc1 and fc2)
 
-    Da usare per le prime poche epoche su dataset White.
+    To use as first step of fine-tuning.
     """
     for name, param in model.named_parameters():
         if name.startswith(("fc1", "fc2", "fc3")):
             param.requires_grad = True
         else:
             param.requires_grad = False
-    '''model.named_parameters() contiene tutti i parametri del modello che a seconda che siano
-    di un conv layer o di un fully connected verranno chiamati: conv1.weight, conv2.bias,...,
-    fc1.weigth, fc2bias...
-    poi calcola il gradiente (quindi allena) solo fc1 e fc2'''
+    '''model.named_parameters() contains all the parameters of the model, each one is either
+    a conv layer or a fully connected one, so they are called: conv1.weight, conv2.bias,...,
+    fc1.weight, fc2.bias...
+    then it calculates the gradient (so trains) only fc1 and fc2'''
 
 
 def unfreeze_last_conv_block(model: CNN) -> None:
     """
-    STEP 2 del fine-tuning:
-    - rende allenabili conv3, bn3, fc1 e fc2
-    - conv1/bn1/conv2/bn2 restano congelati (feature più generiche)
+    STEP 2 fine-tuning:
+    - make conv3, bn3, fc1 and fc2 trainable
+    - conv1/bn1/conv2/bn2 remain frozen (more generic features)
 
-    Da usare dopo lo STEP 1, per un adattamento un po' più profondo.
+    To use after STEP 1, for a deeper adaptation.
     """
     for name, param in model.named_parameters():
         if name.startswith(("conv3", "bn3", "fc1", "fc2", "fc3")):
@@ -51,9 +51,9 @@ def unfreeze_last_conv_block(model: CNN) -> None:
 def setup_feature_extraction(model: nn.Module):
     """
     FASE 1: Feature Extraction [1]
-    - Congela layer1-4 (feature extractor ImageNet)
-    - Allena SOLO FC finale (adattamento alle 7 classi rifiuti)
-    LR alto (1e-3) perché solo ~1% parametri allenabili
+    - Freeze layer1-4 (feature extractor ImageNet)
+    - Train ONLY FC final (adaptation to 7 waste classes)
+    LR high (1e-3) because only ~1% parameters are trainable
     """
     for param in model.parameters():
         param.requires_grad = False
@@ -62,10 +62,10 @@ def setup_feature_extraction(model: nn.Module):
 
 def setup_fine_tuning_last_block(model: nn.Module):
     """
-    FASE 2: Fine Tuning parziale [2]
-    - Sblocca layer4 (caratteristiche high-level) + FC
-    - Congela layer1-3 (caratteristiche low-level ImageNet)
-    LR basso (1e-4): fine adattamento senza distruggere pesi pre-addestrati
+    FASE 2: Partial Fine Tuning
+    - Unfreeze layer4 (high-level features) + FC
+    - Freeze layer1-3 (low-level ImageNet features)
+    LR low (1e-4): fine adaptation without destroying pre-trained weights
     """
     for name, param in model.named_parameters():
         # Sblocca ULTIMO blocco conv (layer4) + FC
@@ -76,8 +76,8 @@ def setup_fine_tuning_last_block(model: nn.Module):
 
 def get_trainable_parameters(model):
     """
-    Tramite model.named_parameters ho estratto tutti i parametri, ognuno ha un attributo
-    param.requires_grad che se = True permette a pyhton di calcolare il gradiente.
-    Qui filtriamo solamente i parametri = True (quindi no quelli dei layer congelati)
+    Through model.named_parameters I extracted all the parameters, each one has an attribute
+    param.requires_grad which if = True allows python to compute the gradient.
+    Here we filter only the parameters = True (so not those of the frozen layers)
     """
     return filter(lambda p: p.requires_grad, model.parameters())

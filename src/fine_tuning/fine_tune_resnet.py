@@ -35,7 +35,8 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
         "val_f1": [],
         "val_conf_mat":[]
     }
-    #Training of just the fully connected layers
+    # Training of just the fully connected layers
+
     setup_feature_extraction(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),
@@ -74,7 +75,8 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
     state_dict["training_history"] = history
     torch.save(state_dict, "src/checkpoints/resnet_stage2.pth")
 
-    #Training of the model whit freezing just the 1st and 2nd convolutional layers
+    # Training of the model whit freezing just the 1st and 2nd convolutional layers
+    
     setup_fine_tuning_last_block(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),

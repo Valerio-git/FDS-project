@@ -6,14 +6,14 @@ from pathlib import Path
 DATASETS_ROOT = "Datasets"
 MAPPING_FILE = "mapping.json"
 
-# Carica il mapping
+# Upload the mapping
 with open(MAPPING_FILE, "r") as f:
     mapping = json.load(f)
 
 def safe_move_with_rename(src, dst_dir, prefix):
     """
-    Sposta un file in dst_dir rinominandolo con un nome unico
-    basato sul prefisso (tipo di item) e un contatore progressivo.
+    Move the file from `src` to `dst_dir`, renaming it
+    based on the prefix (type of item) and a progressive counter.
     """
     os.makedirs(dst_dir, exist_ok=True)
     
@@ -38,7 +38,7 @@ def reorganize(dataset_path):
             continue
         
         if item not in mapping:
-            print(f"⚠️ '{item}' non nel mapping -> SKIP")
+            print(f"⚠️ '{item}' not in mapping -> SKIP")
             continue
 
         category = mapping[item]
@@ -46,6 +46,7 @@ def reorganize(dataset_path):
         os.makedirs(category_path, exist_ok=True)
 
         # default / real_world
+
         for sub in ["default", "real_world"]:
             original_sub = os.path.join(item_path, sub)
             if os.path.isdir(original_sub):
@@ -55,11 +56,10 @@ def reorganize(dataset_path):
                     src_file = os.path.join(original_sub, file)
                     safe_move_with_rename(src_file, dest_sub, item)
 
-        # elimina cartella item vuota
+        # Delete empty item folder
         shutil.rmtree(item_path)
 
-    print(f"✔️ COMPLETATO: {dataset_path}")
+    print(f"✔️ COMPLETED: {dataset_path}")
 
-# RUN
 reorganize(os.path.join(DATASETS_ROOT, "raw_dataset"))
 reorganize(os.path.join(DATASETS_ROOT, "white_dataset"))

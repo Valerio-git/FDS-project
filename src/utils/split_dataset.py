@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 def _collect_class_files(root_dir: str, white: bool) -> Dict[str, List[str]]:
     
-    #returns dict: class_name -> file list (absolute or relative path)
+    # Returns dict: class_name -> file list (absolute or relative path)
     
     classes = sorted(os.listdir(root_dir))
     per_class_files = {}
@@ -23,7 +23,7 @@ def _collect_class_files(root_dir: str, white: bool) -> Dict[str, List[str]]:
             sub_dir = os.path.join(class_dir, sub)
             if not os.path.isdir(sub_dir):
                 continue
-            names = sorted(os.listdir(sub_dir))  # sorting fondamentale
+            names = sorted(os.listdir(sub_dir))
             for n in names:
                 files.append(os.path.join(sub_dir, n)) # for each file's name it stores their path into files
 
@@ -40,10 +40,10 @@ def create_or_load_splits(
     ratios: Tuple[float, float, float] = (0.6, 0.2, 0.2), # percentage of data in each split
 ) -> Dict:
     """
-    Se split_path esiste, lo carica.
-    Altrimenti crea split stratificato per classe, lo salva e lo ritorna.
+    If split does not exist, creates it and saves it to `split_path`.
+    If it exists, loads and returns it.
 
-    Formato JSON:
+    JSON structure:
     {
       "meta": {...},
       "classes": [...],

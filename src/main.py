@@ -53,10 +53,6 @@ def pipeline():
     time.sleep(1)
     print("[6] \n--- starting testing phase ---\n")
     testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = white, model_type = model_type, seed = seed, num_workers = num_workers)
-    '''if white == True and model_type != "resnet":
-        x = input("Do you want to compute results also for raw dataset? ([y]es / [n]o): ").strip().lower() in ("y", "yes")
-        if x:
-            testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = False, model_type = model_type, seed = seed, num_workers = num_workers)'''
     if model_type != "resnet":
         testing(num_samples = 6, grid_rows= 2, grid_cols = 3, white = False, model_type = model_type, seed = seed, num_workers = num_workers)
 

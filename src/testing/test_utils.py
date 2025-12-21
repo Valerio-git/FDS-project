@@ -35,15 +35,6 @@ def get_device() -> torch.device:
 
 ModelType = Literal["cnn", "resnet"]
 
-'''def load_test_dataset(transform: transforms.Compose, white:bool = False) -> Tuple[WasteDataset, DataLoader]:
-    if white:
-        dataset_path = get_white_dataset_path()
-    else:
-        dataset_path = get_raw_dataset_path()
-    test_dataset = WasteDataset(dataset_path, split="test", transform=transform, white = white)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
-    return test_dataset, test_loader'''
-
 def load_test_dataset(transform, white=False, seed=42, num_workers=0):
     dataset_path = get_white_dataset_path() if white else get_raw_dataset_path()
     split_file = "src/splits_white.json" if white else "src/splits_raw.json"
