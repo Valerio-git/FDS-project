@@ -7,8 +7,9 @@ The structure of the code it's inside the src folder.
 ## Main file
 The file *main* contains the entire pipeline to execute the code. 
 Firstly it sets the seeds and find whether there is a GPU to work on. Then it will recive instrunction on:
-- which model to use (CNN or resnet50)
-- which dataset to work on (raw dataset, the original one or white dataset)
+- which model to use (CNN or resnet50).
+- which dataset to work on (raw dataset, the original one or white dataset).
+
 If the model chosen is CNN then it will train the model finding the optimal values in the grid search, saving everything in *cnn_stage1_A.pth*. Otherwise (model_type = resnet it will skip this part going strictly to fine tuning phase). 
 Then if the dataset selected was **white dataset** then it will implement the training and validation for fine tune model (cnn or resnet). Otherwise it will go directly to the tesing phase of the model selected. 
 
