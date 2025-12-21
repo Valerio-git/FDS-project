@@ -45,5 +45,5 @@ It contains file whit different functions:
 - *split_dataset.py* it's called during the splitting of the dataset. It creates a .json file in which train, validation and test set are contained. If the file already exists it will not create another one. (This allowed us to not recreate each time a splitting). Cleary depending on which dataset we're working on it will creates *splits_raw.json* or *splits_white.json*.
 - *data_utils.py* although it is not inside this folder it contains the fuctions to get the path for the different datasets.
 
-**Checkpoints folder**
+## Checkpoints folder
 It contains files in which there are the models and the best parameters found after: training and grid search (*cnn_stage1_A.pth*), the training made on fine tuned models (*cnn_stage2.pth*, *resnet_stage2.pth*). 
