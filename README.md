@@ -20,10 +20,10 @@ It contains:
 
 ## Data folder
 It contains utilities for dataset loading, preprocessing, and management:
-- *data_loader.py* defines the `WasteDataset` PyTorch class for raw and white datasets and handles train, validation and test set (60%/20%/20%) with consistent class ordering.
+- *data_loader.py* defines the WasteDataset PyTorch class for raw and white datasets and handles train, validation and test set (60%/20%/20%) with consistent class ordering.
 - *transforms.py* defines image transformation pipelines (augmentation for training, normalization for validation and testing) and uses ImageNet statistics for ResNet compatibility.
-- *reorganize_datasets.py* reorganizes datasets according to `mapping.json` and moves and renames images from item to category folders.
-- *white_dataset.py* creates white-background dataset using `rembg`, copies `default` images and removes background from `real_world` images.
+- *reorganize_datasets.py* reorganizes datasets according to mapping.json and moves and renames images from item to category folders.
+- *white_dataset.py* creates white-background dataset, copies default images and removes background from real_world images.
 
 ## Training folder
 All the codes for the training of the model and its validation are contained in the *training* folder:
@@ -37,7 +37,7 @@ All the codes for the training of the model and its validation are contained in 
 This folder contains the main files:
 - *fine_tuning.py* which contains the functions used during the fine tuning of both CNN and resnet50 on the **white dataset**.
 - *Fine_tune_CNN.py* that trains and validates fine-tuned *CNN* on the new white dataset using optimal values (for batch size, learning rate and weight decay) found during the grid search.
-- *Fine_tune_resnet.py* which trains and validates fine-tuned *resent50* on the white dataset. 
+- *Fine_tune_resnet.py* which trains and validates fine-tuned *resnet50* on the white dataset. 
 
 ## Testing folder 
 Files for the testing phase are inside this folder:
