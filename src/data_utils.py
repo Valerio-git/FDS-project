@@ -29,11 +29,7 @@ def _ensure_kaggle_available():
 
 
 def _download_dataset_if_needed() -> Path:
-    """
-    Download the dataset from Kaggle only if the Datasets/ folder does not exist.
-    If it exists, do not download anything.
-    Returns the Path to Datasets/.
-    """
+    
     if BASE_DIR.exists():
         return BASE_DIR
 
@@ -43,16 +39,15 @@ def _download_dataset_if_needed() -> Path:
     source_path = kagglehub.dataset_download(KAGGLE_DATASET)
     print("Dataset downloaded to cache at:", source_path)
 
-    # Copy from cache to local Datasets/ folder
+    
     os.makedirs(BASE_DIR, exist_ok=True)
 
-    # ⚠️The user could have only downloaded a subset of the dataset.
-    # So we copy only the subfolders that exist in the cache.
+    
     return BASE_DIR
 
 
 def get_white_dataset_path() -> str:
-    """Returns the path of the white_dataset folder."""
+    
     _download_dataset_if_needed()
     white_path = BASE_DIR / WHITE_SUBDIR
 
@@ -66,7 +61,7 @@ def get_white_dataset_path() -> str:
 
 
 def get_raw_dataset_path() -> str:
-    """Returns the path of the raw_dataset folder."""
+    
     _download_dataset_if_needed()
     raw_path = BASE_DIR / RAW_SUBDIR
 
@@ -79,7 +74,7 @@ def get_raw_dataset_path() -> str:
     return str(raw_path)
 
 
-# === DEBUG ===
+
 if __name__ == "__main__":
     print("White dataset path:", get_white_dataset_path())
     print("Raw dataset path:", get_raw_dataset_path())

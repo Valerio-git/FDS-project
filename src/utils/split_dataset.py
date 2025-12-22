@@ -5,7 +5,6 @@ from typing import Dict, List, Tuple
 
 def _collect_class_files(root_dir: str, white: bool) -> Dict[str, List[str]]:
     
-    # Returns dict: class_name -> file list (absolute or relative path)
     
     classes = sorted(os.listdir(root_dir))
     per_class_files = {}
@@ -25,9 +24,9 @@ def _collect_class_files(root_dir: str, white: bool) -> Dict[str, List[str]]:
                 continue
             names = sorted(os.listdir(sub_dir))
             for n in names:
-                files.append(os.path.join(sub_dir, n)) # for each file's name it stores their path into files
+                files.append(os.path.join(sub_dir, n)) 
 
-        per_class_files[class_name] = files # dict in which to each class corresponds a list of every path of each file belonging to subfolders of that class
+        per_class_files[class_name] = files 
 
     return per_class_files
 
@@ -39,21 +38,7 @@ def create_or_load_splits(
     seed: int = 42,
     ratios: Tuple[float, float, float] = (0.6, 0.2, 0.2), # percentage of data in each split
 ) -> Dict:
-    """
-    If split does not exist, creates it and saves it to `split_path`.
-    If it exists, loads and returns it.
-
-    JSON structure:
-    {
-      "meta": {...},
-      "classes": [...],
-      "splits": {
-        "train": [{"path": "...", "label": 0}, ...],
-        "val":   [{"path": "...", "label": 0}, ...],
-        "test":  [{"path": "...", "label": 0}, ...]
-      }
-    }
-    """
+    
     if os.path.exists(split_path):
         with open(split_path, "r", encoding="utf-8") as f:
             return json.load(f) # if the split path already exists it just load it 

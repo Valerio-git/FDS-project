@@ -8,7 +8,7 @@ from torchvision import transforms
 def hyperparameter_search_lr_bs(seed = 42, num_workers = 0):
     batch_sizes = [16, 32, 64]
     learning_rates = [1e-3, 1e-2, 5e-2]
-    num_epochs = 50  # A lot, but early stopping will help
+    num_epochs = 50  
     results = []
     best_global_loss = float("inf")
     best_global_f1 = -float("inf")
@@ -58,9 +58,8 @@ def hyperparameter_search_lr_bs(seed = 42, num_workers = 0):
                 torch.save(model.state_dict(), "best_model_lr_bs.pth")
                 print("👉 New partial best model saved to best_model_lr_bs.pth")
 
-    # Mostra i risultati ordinati per validation f1
     results_sorted = sorted(results, key=lambda x: x["best_val_f1"])
-    print("\n=== Risultati ordinati per best validation f1 ===")
+    print("\n=== Results sorted by best validation f1 ===")
     for r in results_sorted:
         print(
             f"bs={r['batch_size']}, lr={r['learning_rate']}, "
@@ -88,7 +87,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
             batch_size=best_batch_size,
             num_epochs=num_epochs,
             learning_rate=best_lr,
-            model_save_path=None,       # nessun salvataggio per run
+            model_save_path=None,       
             early_stopping=True,
             patience=7,
             weight_decay=wd,
@@ -140,7 +139,7 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
 
     results_sorted = sorted(results, key=lambda x: x["best_val_f1"])
 
-    print("\n=== RISULTATI WEIGHT_DECAY (ordinati per best validation f1) ===")
+    print("\n=== RESULTS WEIGHT_DECAY (sorted by best validation f1) ===")
     for r in results_sorted:
         print(
             f"wd={r['weight_decay']}, "
@@ -148,17 +147,15 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
             f"val_f1={r['best_val_f1']:.4f}"   
         )
 
-    print("\nMigliore combinazione completa:", best_global_config)
+    print("\nBest complete combination:", best_global_config)
     return results_sorted, best_global_config
 
 if __name__ == "__main__":
-    # STEP 1: cerca LR + batch size
-    '''results_lr_bs, best_lr_bs = hyperparameter_search_lr_bs()
-    print("\nMigliore combinazione LR+BS:", best_lr_bs)'''
 
+    
     best_bs = 64 #best_lr_bs["batch_size"]
     best_lr = 0.001 #best_lr_bs["learning_rate"]
 
     # STEP 2: a LR+BS fissati, cerca il miglior weight_decay
     results_wd, best_full = hyperparameter_search_weight_decay(best_bs, best_lr)
-    print("\nConfigurazione finale consigliata:", best_full)
+    print("\nFinal configuration suggested:", best_full)

@@ -81,11 +81,11 @@ def evaluate_test(model, dataloader, device):
             correct += (preds == labels).sum().item()
             total += labels.size(0)
            
-            all_preds.extend(preds.cpu().numpy()) # takes preds tensor and pass them to cpu, extend converts them to lists
-            all_labels.extend(labels.cpu().numpy()) # same process for labels
+            all_preds.extend(preds.cpu().numpy()) 
+            all_labels.extend(labels.cpu().numpy()) 
 
 
-    all_preds = np.array(all_preds) # coverting them into numpy arrays 
+    all_preds = np.array(all_preds) 
     all_labels = np.array(all_labels)
 
     accuracy = correct/total

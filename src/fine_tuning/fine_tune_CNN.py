@@ -30,10 +30,7 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
     train_dataset, val_dataset, \
         train_loader, val_loader = get_dataloaders(dataset_path, batch_size = best_batch_size, white = True, seed = seed, num_workers = num_workers, include_test = False)
 
-    # Number of batch size must be the optimal one
-
     # Upload the model with best parameter found during training on 1st dataset
-
     model = load_cnn_from_checkpoint(
         checkpoint_path = "src/checkpoints/cnn_stage1_A.pth",
         num_classes = len(train_dataset.classes),
@@ -50,7 +47,6 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
     }
 
     # Training of just the fully connected layers
-
     freeze_all_except_classifier(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),
@@ -89,8 +85,7 @@ def fine_tuning_cnn(seed = 42, num_workers = 0):
     state_dict["training_history"] = history
     torch.save(state_dict, "src/checkpoints/cnn_stage2.pth")
 
-    # Training of the model whit freezing just the 1st and 2nd convolutional layers
-    
+    # Training of the model whit freezing just the 1st and 2nd convolutional layers   
     unfreeze_last_conv_block(model)
     optimizer = torch.optim.Adam(
         get_trainable_parameters(model),

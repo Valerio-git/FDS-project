@@ -3,6 +3,7 @@ import torch.nn as nn
 class CNN(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
+        
         # ----- Convolutional layers -----
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
@@ -17,8 +18,6 @@ class CNN(nn.Module):
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
         self.bn3 = nn.BatchNorm2d(128)
 
-        # ----- Fully connected -----
-        # 128 -> 512 -> 256 -> num_classes
         self.fc1 = nn.Linear(128, 512)
         self.bn_fc1 = nn.BatchNorm1d(512)
 

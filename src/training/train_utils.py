@@ -120,13 +120,13 @@ def evaluate(model, dataloader, criterion):
             correct += (preds == labels).sum().item()
             total += labels.size(0)
            
-            all_preds.extend(preds.cpu().numpy()) # takes preds tensor and pass them to cpu, extend converts them to lists
-            all_labels.extend(labels.cpu().numpy()) # same process for labels
+            all_preds.extend(preds.cpu().numpy()) 
+            all_labels.extend(labels.cpu().numpy()) 
 
     epoch_loss = running_loss / total
     epoch_acc = correct / total
 
-    all_preds = np.array(all_preds) # coverting them into numpy arrays 
+    all_preds = np.array(all_preds) 
     all_labels = np.array(all_labels)
 
     f1 = f1_score(all_labels, all_preds, average="macro")

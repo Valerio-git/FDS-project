@@ -1,6 +1,6 @@
 import torchvision.transforms as T
 
-# ========== BASIC TRANSFORMATIONS (NO AUGMENTATION) ==========
+# BASIC TRANSFORMATIONS (NO AUGMENTATION)
 no_aug_transform = T.Compose([
     T.Resize((224, 224)),
     T.ToTensor(),
@@ -10,20 +10,20 @@ no_aug_transform = T.Compose([
     )
 ])
 
-# ========== TRANSFORMATIONS WITH AUGMENTATION (ONLY TRAINING) ==========
+# TRANSFORMATIONS WITH AUGMENTATION (ONLY TRAINING)
 train_aug_transform = T.Compose([
     T.Resize((224, 224)),
-    T.RandomHorizontalFlip(p=0.5),                   # horizontal flip
-    T.RandomRotation(degrees=15),                    # little rotation
+    T.RandomHorizontalFlip(p=0.5),                   
+    T.RandomRotation(degrees=15),                    
     T.RandomAffine(
         degrees=0,
-        translate=(0.05, 0.05)                       # small shifts
+        translate=(0.05, 0.05)                       
     ),
     T.ColorJitter(
         brightness=0.1,
         contrast=0.1,
         saturation=0.1
-    ),                                               # slight color variations
+    ),                                               
     T.ToTensor(),
     T.Normalize(
         mean=[0.485, 0.456, 0.406],
@@ -31,7 +31,7 @@ train_aug_transform = T.Compose([
     )
 ])
 
-# ========== TRANSFORMATIONS FOR VALIDATION / TEST ==========
+# TRANSFORMATIONS FOR VALIDATION / TEST 
 
 val_test_transform = T.Compose([
     T.Resize((224, 224)),
@@ -44,13 +44,7 @@ val_test_transform = T.Compose([
 
 
 def get_transform(split: str = "train", use_augmentation: bool = True):
-    """
-    Returns the correct transformation based on the split and whether augmentation is used.
-
-    - split = 'train' and use_augmentation=True → train_aug_transform
-    - split = 'train' and use_augmentation=False → no_aug_transform
-    - split = 'val'/'test' → val_test_transform
-    """
+    
     if split == "train":
         if use_augmentation:
             return train_aug_transform
