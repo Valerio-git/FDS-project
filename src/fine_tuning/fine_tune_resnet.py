@@ -46,7 +46,7 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
     criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     best_val_f1 = -float("inf")
 
-    for epoch in range(20):
+    for epoch in range(10):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
         val_loss, val_acc, _, _, val_f1, val_conf_mat = evaluate(model, val_loader, criterion)
 
@@ -82,7 +82,7 @@ def fine_tuning_resnet(seed = 42, num_workers = 0):
         weight_decay=1e-4
     )
 
-    for epoch in range(20):
+    for epoch in range(10):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
         val_loss, val_acc, _, _, val_f1, val_conf_mat = evaluate(model, val_loader, criterion)
 

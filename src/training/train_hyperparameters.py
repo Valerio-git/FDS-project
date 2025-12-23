@@ -152,10 +152,9 @@ def hyperparameter_search_weight_decay(best_batch_size, best_lr, num_workers = 0
 
 if __name__ == "__main__":
 
-    
-    best_bs = 64 #best_lr_bs["batch_size"]
-    best_lr = 0.001 #best_lr_bs["learning_rate"]
+    _, best_config = hyperparameter_search_lr_bs()
+    best_bs = best_config["batch_size"]
+    best_lr = best_config["learning_rate"]
 
-    # STEP 2: a LR+BS fissati, cerca il miglior weight_decay
     results_wd, best_full = hyperparameter_search_weight_decay(best_bs, best_lr)
     print("\nFinal configuration suggested:", best_full)

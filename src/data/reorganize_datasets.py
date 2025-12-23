@@ -61,5 +61,6 @@ def reorganize(dataset_path):
 
     print(f"✔️ COMPLETED: {dataset_path}")
 
-reorganize(os.path.join(DATASETS_ROOT, "raw_dataset"))
-reorganize(os.path.join(DATASETS_ROOT, "white_dataset"))
+if __name__ == "__main__":
+    reorganize(os.path.join(DATASETS_ROOT, "raw_dataset"))
+    reorganize(os.path.join(DATASETS_ROOT, "white_dataset"))

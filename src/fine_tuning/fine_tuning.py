@@ -38,7 +38,6 @@ def unfreeze_last_conv_block(model: CNN) -> None:
     for name, param in model.named_parameters():
         if name.startswith(("conv3", "bn3", "fc1", "fc2", "fc3")):
             param.requires_grad = True
-        # qui congela solamente i primi due layer convoluzionali
 
 def setup_feature_extraction(model: nn.Module):
     """
@@ -58,7 +57,6 @@ def setup_fine_tuning_last_block(model: nn.Module):
     - Freeze layer1-3 (low-level ImageNet features)
     """
     for name, param in model.named_parameters():
-        # Sblocca ULTIMO blocco conv (layer4) + FC
         if name.startswith("layer4") or name.startswith("fc"):
             param.requires_grad = True
         else:
