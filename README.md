@@ -49,7 +49,7 @@ It contains files with different functions:
 - *confusion_matrices.py* creates the confusion matrix for each model.
 - *functions.py* contains general functions for setting the seed (allowing reproducibility of results) and for interacting with the console (choosing which model to use and whether or not to do fine tuning).
 - *plots.py* contains functions for plotting training values of **accuracy**, **F1-score** and **loss** for each model.
-- *split_dataset.py* creates a .json file in which training, validation and test set are contained. If the file already exists, it doesn't create another one (this allowed us not to recreate a splitting each time). Depending on which dataset you're working on, it will create or *splits_raw.json* or *splits_white.json*.
+- *split_dataset.py* creates a .json file in which training, validation and test set are contained. If the file already exists, it doesn't create another one (this allowed us to not recreate a splitting each time). Depending on which dataset you're working on, it will create or *splits_raw.json* or *splits_white.json*.
 - *data_utils.py*, although it is not inside this folder, it contains the fuctions to find the path for different datasets.
 
 ## Checkpoints folder
